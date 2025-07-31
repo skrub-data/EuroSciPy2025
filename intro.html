@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; Probabilistic calibration of cost-sensitive learning</title>
+    <title>Forecasting with machine learning &#8212; Forecasting with machine learning</title>
   
   
   
@@ -28,11 +28,11 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="What is a calibration curve?" href="content/build_calibration_curve.html" />
+    <link rel="next" title="Historical weather data download from open-meteo.com" href="content/notebooks/fetch_weather_data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,8 +154,8 @@
       
     
     
-    <img src="_static/logo.svg" class="logo__image only-light" alt="Probabilistic calibration of cost-sensitive learning - Home"/>
-    <script>document.write(`<img src="_static/logo.svg" class="logo__image only-dark" alt="Probabilistic calibration of cost-sensitive learning - Home"/>`);</script>
+    <img src="_static/logo.svg" class="logo__image only-light" alt="Forecasting with machine learning - Home"/>
+    <script>document.write(`<img src="_static/logo.svg" class="logo__image only-dark" alt="Forecasting with machine learning - Home"/>`);</script>
   
   
 </a></div>
@@ -176,13 +176,18 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Getting started
+                    Forecasting with machine learning
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="content/build_calibration_curve.html">What is a calibration curve?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/different_calibration_curves.html">Understanding calibration curves</a></li>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Forecasting with Machine Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/fetch_weather_data.html">Historical weather data download from open-meteo.com</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/feature_engineering.html">Feature engineering for electricity load forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/single_horizon_prediction.html">Single horizon predictive modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/multiple_horizons_prediction.html">Multiple horizons predictive modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/prediction_intervals.html">Computing prediction intervals using quantile regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/direct_vs_recursive_forecasting.html">Direct vs Recursive Forecasting</a></li>
 </ul>
 
     </div>
@@ -237,7 +242,7 @@
       
       
       
-      <li><a href="https://github.com/probabl-ai/calibration-cost-sensitive-learning" target="_blank"
+      <li><a href="https://github.com/probabl-ai/forecasting" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -254,7 +259,7 @@
       
       
       
-      <li><a href="https://github.com/probabl-ai/calibration-cost-sensitive-learning/issues/new?title=Issue%20on%20page%20%2Fintro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/probabl-ai/forecasting/issues/new?title=Issue%20on%20page%20%2Fintro.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -368,7 +373,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Getting started</h1>
+    <h1>Forecasting with machine learning</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -378,9 +383,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-pixi">Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-jupyter-lab">Launching Jupyter Lab</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-lecture-notes">Opening lecture notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#slides">Slides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notebooks">Notebooks </a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-notebooks-locally">Running the notebooks locally</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-pixi">Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-jupyter-lab">Launching Jupyter Lab</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-lecture-notes">Opening lecture notes</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -392,15 +405,38 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="forecasting-with-machine-learning">
+<h1>Forecasting with machine learning<a class="headerlink" href="#forecasting-with-machine-learning" title="Link to this heading">#</a></h1>
+<p>This tutorial introduces how to use machine learning to forecast time series data.</p>
+<section id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<section id="slides">
+<h3>Slides<a class="headerlink" href="#slides" title="Link to this heading">#</a></h3>
+</section>
+<section id="notebooks">
+<h3>Notebooks <a class="reference external" href="https://probabl-ai.github.io/forecasting/jupyterlite/lab"><img alt="Launch JupyterLite" src="_images/jupyterlite_badge.svg" /></a><a class="headerlink" href="#notebooks" title="Link to this heading">#</a></h3>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Forecasting with Machine Learning</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/fetch_weather_data.html">Historical weather data download from open-meteo.com</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/feature_engineering.html">Feature engineering for electricity load forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/single_horizon_prediction.html">Single horizon predictive modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/multiple_horizons_prediction.html">Multiple horizons predictive modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/prediction_intervals.html">Computing prediction intervals using quantile regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/notebooks/direct_vs_recursive_forecasting.html">Direct vs Recursive Forecasting</a></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="running-the-notebooks-locally">
+<h2>Running the notebooks locally<a class="headerlink" href="#running-the-notebooks-locally" title="Link to this heading">#</a></h2>
 <section id="install-pixi">
-<h2>Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code><a class="headerlink" href="#install-pixi" title="Link to this heading">#</a></h2>
+<h3>Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code><a class="headerlink" href="#install-pixi" title="Link to this heading">#</a></h3>
 <p>You can refer to the <a class="reference external" href="https://pixi.sh/latest/#installation">official website</a> for
 installation.</p>
 </section>
 <section id="launching-jupyter-lab">
-<h2>Launching Jupyter Lab<a class="headerlink" href="#launching-jupyter-lab" title="Link to this heading">#</a></h2>
+<h3>Launching Jupyter Lab<a class="headerlink" href="#launching-jupyter-lab" title="Link to this heading">#</a></h3>
 <p>To launch Jupyter Lab, run the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pixi<span class="w"> </span>run<span class="w"> </span>jupyter<span class="w"> </span>lab
 </pre></div>
@@ -408,16 +444,11 @@ installation.</p>
 <p>The Python environment and necessary packages will be automatically installed for you.</p>
 </section>
 <section id="opening-lecture-notes">
-<h2>Opening lecture notes<a class="headerlink" href="#opening-lecture-notes" title="Link to this heading">#</a></h2>
+<h3>Opening lecture notes<a class="headerlink" href="#opening-lecture-notes" title="Link to this heading">#</a></h3>
 <p>The lecture notes are available in the <code class="docutils literal notranslate"><span class="pre">python_files</span></code> directory. To open the Python
 file as notebook, you need to right click on the file and select
 <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">with</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Notebook</span></code>.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="content/build_calibration_curve.html">What is a calibration curve?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/different_calibration_curves.html">Understanding calibration curves</a></li>
-</ul>
-</div>
+</section>
 </section>
 </section>
 
@@ -452,11 +483,11 @@ file as notebook, you need to right click on the file and select
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="content/build_calibration_curve.html"
+       href="content/notebooks/fetch_weather_data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">What is a calibration curve?</p>
+        <p class="prev-next-title">Historical weather data download from open-meteo.com</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -476,9 +507,17 @@ file as notebook, you need to right click on the file and select
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-pixi">Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-jupyter-lab">Launching Jupyter Lab</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-lecture-notes">Opening lecture notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#slides">Slides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notebooks">Notebooks </a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-notebooks-locally">Running the notebooks locally</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-pixi">Install <code class="docutils literal notranslate"><span class="pre">pixi</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-jupyter-lab">Launching Jupyter Lab</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-lecture-notes">Opening lecture notes</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
