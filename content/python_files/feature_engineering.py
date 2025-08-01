@@ -13,15 +13,14 @@
 # All these data sources cover a time range from March 23, 2021 to May 31,
 # 2025.
 #
-# Since our maximum forecasting horizon is 24 hours, we consider that the
+# Since our forecasting horizon is 24 hours, we consider that the
 # future weather data is known at a chosen prediction time. Similarly, the
 # holidays and calendar features are known at prediction time for any point in
 # the future.
+# We can also use the load data to engineer some lagged features and rolling
+# aggregations.
 #
-# Therefore, exogenous features derived from the weather and calendar data can
-# be used to engineer "future covariates". Since the load data is our
-# prediction target, we will can also use it to engineer "past covariates" such
-# as lagged features and rolling aggregations. The future values of the load
+#  The future values of the load
 # data (with respect to the prediction time) are used as targets for the
 # forecasting model.
 #
@@ -41,8 +40,6 @@
 # The following 3 imports are only needed to workaround some limitations when
 # using polars in a pyodide/jupyterlite notebook.
 #
-# TODO: remove those workarounds once pyodide 0.28 is released with support for
-# the latest polars version.
 
 # %%
 import tzdata  # noqa: F401
@@ -64,9 +61,9 @@ import holidays
 # range is in UTC timezone to avoid any ambiguity when joining with the weather
 # data that is also in UTC.
 #
-# We wrap the resulting polars dataframe in a `skrub` expression to benefit
+# We wrap the resulting polars dataframe in a `skrub` DataOp to benefit
 # from the built-in `skrub.TableReport` display in the notebook. Using the
-# `skrub` expression system will also be useful for other reasons: all
+# `skrub` DataOps will also be useful for other reasons: all
 # operations in this notebook chain operations chained together in a directed
 # acyclic graph that is automatically tracked by `skrub`. This allows us to
 # extract the resulting pipeline and apply it to new data later on, exactly
@@ -205,6 +202,12 @@ def prepare_french_calendar_data(time):
         ],
     )
 
+
+from skrub import DatetimeEncoder
+
+datetime_encoder = DatetimeEncoder(
+    add_weekday=True, add_day_of_year=True, add_total_seconds=False
+)
 
 calendar = prepare_french_calendar_data(time)
 calendar
