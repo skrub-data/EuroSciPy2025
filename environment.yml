@@ -20,8 +20,8 @@ dependencies:
   - u8darts >=0.36.0,<0.37
   - setuptools <81
   - plotly >=6.2.0,<7
+  - skrub ==0.6.0
   - pip:
     - openmeteo-requests >=1.5.0, <2
     - requests-cache >=1.2.1, <2
     - retry-requests >=2.0.0, <3
-    - git+https://github.com/skrub-data/skrub@771f3870a23438211faefb0e54132781256acc0a

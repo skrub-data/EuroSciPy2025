@@ -209,8 +209,24 @@ datetime_encoder = DatetimeEncoder(
     add_weekday=True, add_day_of_year=True, add_total_seconds=False
 )
 
-calendar = prepare_french_calendar_data(time)
-calendar
+def prepare_holidays(time):
+    fr_time = pl.col("time").dt.convert_time_zone("Europe/Paris")
+    fr_year_min = time.select(fr_time.dt.year().min()).item()
+    fr_year_max = time.select(fr_time.dt.year().max()).item()
+    holidays_fr = holidays.country_holidays(
+        "FR", years=range(fr_year_min, fr_year_max + 1)
+    )
+    return time.with_columns(
+            fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
+        
+    )
+
+
+time_encoded = time.rename({"time": "cal"}).skb.apply(datetime_encoder)
+
+calendar = prepare_holidays(time)
+# calendar = prepare_french_calendar_data(time)
+# calendar
 
 
 # %% [markdown]
