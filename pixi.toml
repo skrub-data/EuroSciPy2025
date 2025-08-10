@@ -1,8 +1,10 @@
 [project]
-name = "forecasting"
+name = "Euroscipy 2025 - Skrub tutorial"
 version = "0.1.0"
-description = "Forecasting"
-authors = ["Guillaume Lemaitre <guillaume@probabl.ai>", "Olivier Grisel <olivier@probabl.ai>"]
+description = "Skrub tutorial for Euroscipy 2025."
+authors = ["Guillaume Lemaitre <guillaume@probabl.ai>",
+"Olivier Grisel <olivier@probabl.ai>",
+"Riccardo Cappuzzo <riccardo.cappuzzo@inria.fr>"]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
@@ -59,6 +61,7 @@ convert-to-executed-notebooks = { cmd = "jupytext --to notebook --execute ./cont
 build-book = { cmd = "jupyter-book build book", depends-on = ["convert-to-notebooks", "copy-tutorial-helpers", "copy-parallel-coordinates-plots"] }
 build-jupyterlite = { cmd = "jupyter lite build --contents content --output-dir dist", cwd = "jupyterlite", depends-on = ["convert-to-notebooks"] }
 serve-jupyterlite = { cmd = "python -m http.server", cwd = "jupyterlite/dist", depends-on = ["build-jupyterlite"] }
+build-slides = { cmd = "quarto render", cwd = "content/slides", depends-on = ["convert-to-notebooks"] }
 
 [environments]
 lint = ["lint"]

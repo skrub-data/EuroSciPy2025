@@ -44,16 +44,13 @@ with open("feature_engineering_pipeline.pkl", "rb") as f:
 features = feature_engineering_pipeline["features"]
 targets = feature_engineering_pipeline["targets"]
 prediction_time = feature_engineering_pipeline["prediction_time"]
-horizons = feature_engineering_pipeline["horizons"]
-target_column_name_pattern = feature_engineering_pipeline["target_column_name_pattern"]
 
 # %% [markdown]
 #
 # For now, let's focus on the last horizon (24 hours) to train a model
 # predicting the electricity load at the next 24 hours.
 # %%
-horizon_of_interest = horizons[-1]  # Focus on the 24-hour horizon
-target_column_name = target_column_name_pattern.format(horizon=horizon_of_interest)
+target_column_name = "load_mw_horizon_24h"
 predicted_target_column_name = "predicted_" + target_column_name
 target = targets[target_column_name].skb.mark_as_y()
 target
@@ -79,23 +76,23 @@ features_with_dropped_cols = features.skb.apply(
         cols=skrub.choose_from(
             {
                 "none": s.glob(""),  # No column has an empty name.
-                "load": s.glob("load_*"),
-                "rolling_load": s.glob("load_mw_rolling_*"),
-                "weather": s.glob("weather_*"),
-                "temperature": s.glob("weather_temperature_*"),
-                "moisture": s.glob("weather_moisture_*"),
-                "cloud_cover": s.glob("weather_cloud_cover_*"),
-                "calendar": s.glob("cal_*"),
-                "holiday": s.glob("cal_is_holiday*"),
-                "future_1h": s.glob("*_future_1h"),
-                "future_24h": s.glob("*_future_24h"),
-                "non_paris_weather": s.glob("weather_*") & ~s.glob("weather_*_paris_*"),
+                # "load": s.glob("load_*"),
+                # "rolling_load": s.glob("load_mw_rolling_*"),
+                # "weather": s.glob("weather_*"),
+                # "temperature": s.glob("weather_temperature_*"),
+                # "moisture": s.glob("weather_moisture_*"),
+                # "cloud_cover": s.glob("weather_cloud_cover_*"),
+                # "calendar": s.glob("cal_*"),
+                # "holiday": s.glob("cal_is_holiday*"),
+                # "future_1h": s.glob("*_future_1h"),
+                # "future_24h": s.glob("*_future_24h"),
+                # "non_paris_weather": s.glob("weather_*") & ~s.glob("weather_*_paris_*"),
             },
             name="dropped_cols",
         )
     )
 )
-
+# %%
 hgbr_predictions = features_with_dropped_cols.skb.apply(
     HistGradientBoostingRegressor(
         random_state=0,
@@ -111,7 +108,7 @@ hgbr_predictions = features_with_dropped_cols.skb.apply(
 )
 hgbr_predictions
 
-# %% [markdown]
+horizon_of_interest = horizons[-1]  # Focus on the 24-hour horizon# %% [markdown]
 #
 # The `predictions` expression captures the whole expression graph that
 # includes the feature engineering steps, the target variable, and the model

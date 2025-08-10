@@ -441,12 +441,8 @@ features
 # to 24 hours.
 
 # %%
-horizons = range(1, 25)
-target_column_name_pattern = "load_mw_horizon_{horizon}h"
-
-
 @skrub.deferred
-def build_targets(prediction_time, electricity, horizons):
+def build_targets(prediction_time, electricity):
     return prediction_time.join(
         electricity.with_columns(
                 pl.col("load_mw")
@@ -457,7 +453,7 @@ def build_targets(prediction_time, electricity, horizons):
         right_on="time",
     )
 
-targets = build_targets(prediction_time, electricity, horizons)
+targets = build_targets(prediction_time, electricity)
 targets
 
 # %% [markdown]
@@ -474,8 +470,8 @@ with open("feature_engineering_pipeline.pkl", "wb") as f:
             "features": features,
             "targets": targets,
             "prediction_time": prediction_time,
-            "horizons": horizons,
-            "target_column_name_pattern": target_column_name_pattern,
         },
         f,
     )
+
+# %%

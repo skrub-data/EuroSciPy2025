@@ -90,3 +90,8 @@ jupyterlite/.jupyterlite.doit.db
 
 # requests cache for weather data download
 .cache.sqlite
+
+# Slides files
+content/slides/_freeze/
+content/slides/_site/
+
