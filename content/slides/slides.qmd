@@ -1,8 +1,8 @@
 ---
-title: "Tutorial: Skrub"
+title: "Skrub: Machine Learning with Dataframes"
 title-block-banner: true
 date: 2025-08-18
-subtitle: "Machine Learning with Dataframes"
+subtitle: "Tutorial at EuroSciPy 2025"
 author: "Riccardo Cappuzzo, Guillaume Lemaitre"
 format: 
     revealjs:
@@ -323,9 +323,7 @@ search.plot_parallel_coord()
 ![](images/plot-parallel-coord.png){fig-align="center"}
 
 
-## Time for the tutorial ...
-
-##  Getting involved
+#  Getting involved
 ::: {.nonincremental}
 - [Skrub website](https://skrub-data.org/stable/) (QR code below!)
 - [Skrub materials website](https://skrub-data.org/skrub-materials/index.html)
@@ -335,3 +333,5 @@ search.plot_parallel_coord()
 :::
 
 ![](images/qr-code.png){.absolute bottom=0 right=0 width="250" height="250"}
+
+# Time for the tutorial ...
