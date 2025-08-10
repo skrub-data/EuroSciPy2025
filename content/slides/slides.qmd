@@ -1,5 +1,5 @@
 ---
-title: "Skrub: Machine Learning with Dataframes"
+title: "Skrub: ML with Dataframes"
 title-block-banner: true
 date: 2025-08-18
 subtitle: "Tutorial at EuroSciPy 2025"
