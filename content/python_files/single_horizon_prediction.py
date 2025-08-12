@@ -108,9 +108,11 @@ hgbr_predictions = features_with_dropped_cols.skb.apply(
 )
 hgbr_predictions
 
-horizon_of_interest =  24 # Focus on the 24-hour horizon# %% [markdown]
+horizon_of_interest =  24 # Focus on the 24-hour horizon
+
+# %% [markdown]
 #
-# The `predictions` expression captures the whole expression graph that
+# The `predictions` DataOp captures the whole expression graph that
 # includes the feature engineering steps, the target variable, and the model
 # training step.
 #
@@ -140,7 +142,7 @@ hgbr_pipeline.describe_params()
 # %% [markdown]
 #
 # Since we passed input values to all the upstream `skrub` variables, `skrub`
-# automatically evaluates the whole expression graph graph (train and predict
+# automatically evaluates the whole DataOps graph (train and predict
 # on the same data) so that we can interactively check that everything will
 # work as expected.
 #
@@ -198,7 +200,7 @@ for fold_idx, (train_idx, test_idx) in enumerate(
 #
 # Once the cross-validation strategy is defined, we pass it to the
 # `cross_validate` function provided by `skrub` to compute the cross-validated
-# scores. Here, we compute the mean absolute percentage error that is easily
+# scores. Here, we compute the mean absolute percentage error because it is easily
 # interpretable and customary for regression tasks with a strictly positive
 # target variable such as electricity load forecasting.
 #
@@ -211,9 +213,10 @@ for fold_idx, (train_idx, test_idx) in enumerate(
 # predicts the mean of the target variable for all observations, irrespective
 # of the features.
 #
-# No that in general, a deviance score of 1.0 is not reachable since it
+# Note that in general, a deviance score of 1.0 is not reachable since it
 # corresponds to a model that always predicts the target value exactly
-# for all observations. In practice, because there is always a fraction of the
+# for all observations. In practice, this does not happen because there is always
+# a fraction of the
 # variability in the target variable that is not explained by the information
 # available to construct the features.
 
