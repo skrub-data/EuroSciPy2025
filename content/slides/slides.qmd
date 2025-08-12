@@ -133,13 +133,12 @@ ct = make_column_transformer(
 
 model = make_pipeline(ct, SimpleImputer(), Ridge())
 ```
-## Build a predictive pipeline with `tabular_pipeline` {auto-animate="true" .smaller}
+## Build a predictive pipeline with `tabular_pipeline` {auto-animate="true"}
 ```{python}
 #| echo: true
 import skrub
 from sklearn.linear_model import Ridge
 model = skrub.tabular_pipeline(Ridge())
-model
 ```
 
 ## We now have a pipeline! {.smaller}
@@ -248,15 +247,6 @@ features = features.drop(columns=["ID", "basket_ID"])
 
 predictions = features.skb.apply(ExtraTreesClassifier(n_jobs=-1), y=y)
 ```
-
-## Inspecting the data plan
-```{.python}
-predictions.skb.full_report()
-```
-
-<br/>
-
-<a href="expression_report/index.html" target="_blank">report</a>
 
 ## Exporting the plan in a `learner` {.smaller}
 The data plan can be exported as a `learner`:
