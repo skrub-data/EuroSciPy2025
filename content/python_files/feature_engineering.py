@@ -27,13 +27,11 @@
 # ## Environment setup
 #
 # We need to install some extra dependencies for this notebook if needed (when
-# running jupyterlite). We need the development version of skrub to be able to
-# use the skrub expressions.
+# running jupyterlite).
 
 # %%
 # %pip install -q https://pypi.anaconda.org/ogrisel/simple/polars/1.24.0/polars-1.24.0-cp39-abi3-emscripten_3_1_58_wasm32.whl
-# %pip install -q https://pypi.anaconda.org/ogrisel/simple/skrub/0.6.dev0/skrub-0.6.dev0-py3-none-any.whl
-# %pip install -q altair holidays plotly nbformat
+# %pip install -q altair holidays plotly nbformat skrub
 
 # %% [markdown]
 #
@@ -209,6 +207,7 @@ datetime_encoder = DatetimeEncoder(
     add_weekday=True, add_day_of_year=True, add_total_seconds=False
 )
 
+
 @skrub.deferred
 def prepare_holidays(time):
     fr_time = pl.col("time").dt.convert_time_zone("Europe/Paris")
@@ -218,8 +217,7 @@ def prepare_holidays(time):
         "FR", years=range(fr_year_min, fr_year_max + 1)
     )
     return time.select(
-            fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
-        
+        fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
     )
 
 
@@ -236,6 +234,7 @@ calendar
 #
 # Finally we load the electricity load data. This data will both be used as a
 # target variable but also to craft some lagged and window-aggregated features.
+
 # %%
 @skrub.deferred
 def load_electricity_load_data(time, data_source_folder):
@@ -440,18 +439,18 @@ features
 # Let's build training and evaluation targets for all possible horizons from 1
 # to 24 hours.
 
+
 # %%
 @skrub.deferred
 def build_targets(prediction_time, electricity):
     return prediction_time.join(
         electricity.with_columns(
-                pl.col("load_mw")
-                .shift(-24)
-                .alias("load_mw_horizon_24h")
+            pl.col("load_mw").shift(-24).alias("load_mw_horizon_24h")
         ),
         left_on="prediction_time",
         right_on="time",
     )
+
 
 targets = build_targets(prediction_time, electricity)
 targets

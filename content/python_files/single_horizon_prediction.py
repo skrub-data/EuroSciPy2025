@@ -5,13 +5,11 @@
 # ## Environment setup
 #
 # We need to install some extra dependencies for this notebook if needed (when
-# running jupyterlite). We need the development version of skrub to be able to
-# use the skrub expressions.
+# running jupyterlite).
 
 # %%
 # %pip install -q https://pypi.anaconda.org/ogrisel/simple/polars/1.24.0/polars-1.24.0-cp39-abi3-emscripten_3_1_58_wasm32.whl
-# %pip install -q https://pypi.anaconda.org/ogrisel/simple/skrub/0.6.dev0/skrub-0.6.dev0-py3-none-any.whl
-# %pip install -q altair holidays plotly nbformat
+# %pip install -q altair holidays plotly nbformat skrub
 
 # %%
 import warnings
@@ -72,21 +70,21 @@ import skrub.selectors as s
 
 
 features_with_dropped_cols = features.skb.apply(
-    skrub.SelectCols(
+    skrub.DropCols(
         cols=skrub.choose_from(
             {
-                "none": ~s.glob(""),  # No column has an empty name.
-                "load": ~s.glob("load_*"),
-                "rolling_load": ~s.glob("load_mw_rolling_*"),
-                "weather": ~s.glob("weather_*"),
-                "temperature": ~s.glob("weather_temperature_*"),
-                "moisture": ~s.glob("weather_moisture_*"),
-                "cloud_cover": ~s.glob("weather_cloud_cover_*"),
-                "calendar": ~s.glob("cal_*"),
-                "holiday": ~s.glob("cal_is_holiday*"),
-                "future_1h": ~s.glob("*_future_1h"),
-                "future_24h": ~s.glob("*_future_24h"),
-                # "non_paris_weather": ~s.glob("weather_*") & s.glob("weather_*_paris_*"),
+                "none": s.glob(""),  # No column has an empty name.
+                "load": s.glob("load_*"),
+                "rolling_load": s.glob("load_mw_rolling_*"),
+                "weather": s.glob("weather_*"),
+                "temperature": s.glob("weather_temperature_*"),
+                "moisture": s.glob("weather_moisture_*"),
+                "cloud_cover": s.glob("weather_cloud_cover_*"),
+                "calendar": s.glob("cal_*"),
+                "holiday": s.glob("cal_is_holiday*"),
+                "future_1h": s.glob("*_future_1h"),
+                "future_24h": s.glob("*_future_24h"),
+                "non_paris_weather": s.glob("weather_*") & s.glob("weather_*_paris_*"),
             },
             name="dropped_cols",
         )
@@ -108,7 +106,7 @@ hgbr_predictions = features_with_dropped_cols.skb.apply(
 )
 hgbr_predictions
 
-horizon_of_interest =  24 # Focus on the 24-hour horizon
+horizon_of_interest = 24  # Focus on the 24-hour horizon
 
 # %% [markdown]
 #
@@ -230,6 +228,8 @@ hgbr_cv_results = hgbr_predictions.skb.cross_validate(
     scoring={
         "mape": make_scorer(mean_absolute_percentage_error),
         "r2": get_scorer("r2"),
+        "d2_poisson": make_scorer(d2_tweedie_score, power=1.0),
+        "d2_gamma": make_scorer(d2_tweedie_score, power=2.0),
     },
     return_train_score=True,
     return_learner=True,
@@ -273,13 +273,9 @@ hgbr_cv_predictions[0]
 # visualization to the last 7 days of the fold.
 
 # %%
-altair.Chart(
-    hgbr_cv_predictions[0].tail(24 * 7)
-).transform_fold(
+altair.Chart(hgbr_cv_predictions[0].tail(24 * 7)).transform_fold(
     ["load_mw", "predicted_load_mw"],
-).mark_line(
-    tooltip=True
-).encode(
+).mark_line(tooltip=True).encode(
     x="prediction_time:T", y="value:Q", color="key:N"
 ).interactive()
 
@@ -354,7 +350,7 @@ plot_binned_residuals(hgbr_cv_predictions, by="month").interactive().properties(
 ts_cv_2 = TimeSeriesSplit(
     n_splits=2, test_size=test_size, max_train_size=max_train_size, gap=24
 )
-# randomized_search_hgbr = hgbr_predictions.skb.get_randomized_search(
+# randomized_search_hgbr = hgbr_predictions.skb.make_randomized_search(
 #     cv=ts_cv_2,
 #     scoring="r2",
 #     n_iter=100,
@@ -362,7 +358,8 @@ ts_cv_2 = TimeSeriesSplit(
 #     verbose=1,
 #     n_jobs=-1,
 # )
-# # %%
+
+# %%
 # randomized_search_hgbr.results_.round(3)
 
 # %%
@@ -370,20 +367,20 @@ ts_cv_2 = TimeSeriesSplit(
 # write_json(fig, "parallel_coordinates_hgbr.json")
 
 # %%
-fig = read_json("parallel_coordinates_hgbr.json")
-fig.update_layout(margin=dict(l=200))
+# fig = read_json("parallel_coordinates_hgbr.json")
+# fig.update_layout(margin=dict(l=200))
 
 # %%
 # nested_cv_results = skrub.cross_validate(
-#     environment=predictions.skb.get_data(),
-#     pipeline=randomized_search,
+#     environment=hgbr_predictions.skb.get_data(),
+#     learner=randomized_search_hgbr,
 #     cv=ts_cv_5,
 #     scoring={
 #         "r2": get_scorer("r2"),
 #         "mape": make_scorer(mean_absolute_percentage_error),
 #     },
 #     n_jobs=-1,
-#     return_pipeline=True,
+#     return_learner=True,
 # ).round(3)
 # nested_cv_results
 
@@ -499,9 +496,9 @@ cv_results_ridge = predictions_ridge.skb.cross_validate(
         "mape": make_scorer(mean_absolute_percentage_error),
     },
     return_train_score=True,
-    return_pipeline=True,
+    return_learner=True,
     verbose=1,
-    n_jobs=-1,
+    n_jobs=4,
 )
 
 # %% [markdown]
@@ -531,15 +528,13 @@ cv_results_ridge.round(3)
 
 # %%
 cv_predictions_ridge = collect_cv_predictions(
-    cv_results_ridge["pipeline"], ts_cv_5, predictions_ridge, prediction_time
+    cv_results_ridge["learner"], ts_cv_5, predictions_ridge, prediction_time
 )
 
 # %%
 altair.Chart(cv_predictions_ridge[0].tail(24 * 7)).transform_fold(
     ["load_mw", "predicted_load_mw"],
-).mark_line(
-    tooltip=True
-).encode(
+).mark_line(tooltip=True).encode(
     x="prediction_time:T", y="value:Q", color="key:N"
 ).interactive()
 
@@ -576,13 +571,13 @@ plot_reliability_diagram(cv_predictions_ridge).interactive().properties(
 # expensive, we are reloading the results of the parallel coordinates plot.
 
 # %%
-# randomized_search_ridge = predictions_ridge.skb.get_randomized_search(
+# randomized_search_ridge = predictions_ridge.skb.make_randomized_search(
 #     cv=ts_cv_2,
 #     scoring="r2",
 #     n_iter=100,
 #     fitted=True,
 #     verbose=1,
-#     n_jobs=-1,
+#     n_jobs=4,
 # )
 
 # %%
@@ -608,14 +603,14 @@ fig.update_layout(margin=dict(l=200))
 # %%
 # nested_cv_results_ridge = skrub.cross_validate(
 #     environment=predictions_ridge.skb.get_data(),
-#     pipeline=randomized_search_ridge,
+#     learner=randomized_search_ridge,
 #     cv=ts_cv_5,
 #     scoring={
 #         "r2": get_scorer("r2"),
 #         "mape": make_scorer(mean_absolute_percentage_error),
 #     },
-#     n_jobs=-1,
-#     return_pipeline=True,
+#     n_jobs=4,
+#     return_learner=True,
 # ).round(3)
 
 # %%
