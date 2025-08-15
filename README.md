@@ -1,13 +1,13 @@
-# Tutorial on Forecasting with Machine Learning
+# Tutorial on Skrub DataOps applied to forecasting timeseries
 
 ## Browse the contents online
 
 - [![Launch JupyterLite](./book/images/jupyterbook_badge.svg 'Our JupyterBook
-website')](https://probabl-ai.github.io/forecasting/)
+website')](skrub-data.org/EuroSciPy2025/)
 Static HTML with precomputed results.
 
 - [![Launch JupyterLite](./book/images/jupyterlite_badge.svg 'Our JupyterLite
-website')](https://probabl-ai.github.io/forecasting/jupyterlite/lab)
+website')](skrub-data.org/EuroSciPy2025/jupyterlite/lab)
 In-browser interactive execution environment, no install needed.
 
 ## Local setup

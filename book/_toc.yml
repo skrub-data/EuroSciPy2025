@@ -1,0 +1,12 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+
+- caption: Skrub DataOps applied to forecasting timeseries
+  chapters:
+  - file: content/notebooks/fetch_weather_data
+  - file: content/notebooks/feature_engineering
+  - file: content/notebooks/single_horizon_prediction
