@@ -1,0 +1,71 @@
+{
+  "content": [
+    {
+      "content": null,
+      "created": "2025-08-15T12:23:39.824942Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2025-08-15T12:23:39.824942Z",
+      "mimetype": null,
+      "name": "images",
+      "path": "slides/images",
+      "size": null,
+      "type": "directory",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2025-08-15T12:23:39.825942Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2025-08-15T12:21:54.035463Z",
+      "mimetype": "text/css",
+      "name": "style.css",
+      "path": "slides/style.css",
+      "size": 236,
+      "type": "file",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2025-08-15T12:23:39.825942Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2025-08-15T12:21:54.035463Z",
+      "mimetype": null,
+      "name": "slides.qmd",
+      "path": "slides/slides.qmd",
+      "size": 9069,
+      "type": "file",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2025-08-15T12:23:39.821942Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2025-08-15T12:21:54.031463Z",
+      "mimetype": "application/yaml",
+      "name": "_quarto.yml",
+      "path": "slides/_quarto.yml",
+      "size": 679,
+      "type": "file",
+      "writable": true
+    }
+  ],
+  "created": "2025-08-15T12:23:39.825942Z",
+  "format": "json",
+  "hash": null,
+  "hash_algorithm": null,
+  "last_modified": "2025-08-15T12:23:39.825942Z",
+  "mimetype": null,
+  "name": "slides",
+  "path": "slides",
+  "size": null,
+  "type": "directory",
+  "writable": true
+}

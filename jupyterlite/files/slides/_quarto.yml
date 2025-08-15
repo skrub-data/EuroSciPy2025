@@ -1,0 +1,33 @@
+project:
+  type: website
+  # render:
+  #   - "!src/"
+
+website:
+  title: "Skrub learning materials"
+  favicon: "images/skrub.svg"
+  navbar:
+    left:
+      # - href: index.qmd
+      #   text: Home
+      - href: pages/slides/index_slides.qmd
+        text: Slides
+      - href: pages/notebooks/index_notebooks.qmd
+        text: Notebooks
+      - href: https://skrub-data.org/stable/reference/index.html
+        text: API docs
+      - href: https://skrub-data.org/stable/auto_examples/index.html
+        text: Skrub Examples
+      - href: pages/listings.qmd
+        text: Latest updates
+execute:
+  freeze: auto
+
+format:
+  html:
+    theme: united
+    css: styles.css
+    toc: true
+
+
+

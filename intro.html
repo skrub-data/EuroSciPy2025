@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Forecasting with machine learning &#8212; Forecasting with machine learning</title>
+    <title>Skrub DataOps applied to forecasting timeseries &#8212; Skrub DataOps applied to forecasting timeseries</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -154,8 +154,8 @@
       
     
     
-    <img src="_static/logo.svg" class="logo__image only-light" alt="Forecasting with machine learning - Home"/>
-    <script>document.write(`<img src="_static/logo.svg" class="logo__image only-dark" alt="Forecasting with machine learning - Home"/>`);</script>
+    <img src="_static/logo.svg" class="logo__image only-light" alt="Skrub DataOps applied to forecasting timeseries - Home"/>
+    <script>document.write(`<img src="_static/logo.svg" class="logo__image only-dark" alt="Skrub DataOps applied to forecasting timeseries - Home"/>`);</script>
   
   
 </a></div>
@@ -176,18 +176,15 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Forecasting with machine learning
+                    Skrub DataOps applied to forecasting timeseries
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Forecasting with Machine Learning</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Skrub DataOps applied to forecasting timeseries</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/fetch_weather_data.html">Historical weather data download from open-meteo.com</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/feature_engineering.html">Feature engineering for electricity load forecasting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/single_horizon_prediction.html">Single horizon predictive modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/multiple_horizons_prediction.html">Multiple horizons predictive modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/prediction_intervals.html">Computing prediction intervals using quantile regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/direct_vs_recursive_forecasting.html">Direct vs Recursive Forecasting</a></li>
 </ul>
 
     </div>
@@ -242,7 +239,7 @@
       
       
       
-      <li><a href="https://github.com/probabl-ai/forecasting" target="_blank"
+      <li><a href="https://github.com/skrub-data/EuroSciPy2025" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -259,7 +256,7 @@
       
       
       
-      <li><a href="https://github.com/probabl-ai/forecasting/issues/new?title=Issue%20on%20page%20%2Fintro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/skrub-data/EuroSciPy2025/issues/new?title=Issue%20on%20page%20%2Fintro.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -373,7 +370,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Forecasting with machine learning</h1>
+    <h1>Skrub DataOps applied to forecasting timeseries</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -405,25 +402,24 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="forecasting-with-machine-learning">
-<h1>Forecasting with machine learning<a class="headerlink" href="#forecasting-with-machine-learning" title="Link to this heading">#</a></h1>
-<p>This tutorial introduces how to use machine learning to forecast time series data.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="skrub-dataops-applied-to-forecasting-timeseries">
+<h1>Skrub DataOps applied to forecasting timeseries<a class="headerlink" href="#skrub-dataops-applied-to-forecasting-timeseries" title="Link to this heading">#</a></h1>
+<p>This tutorial introduces the <code class="docutils literal notranslate"><span class="pre">skrub</span></code>
+<a class="reference external" href="https://skrub-data.org/stable/userguide_data_ops.html">DataOps</a> to a forecasting
+timeseries use case.</p>
 <section id="table-of-contents">
 <h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
 <section id="slides">
 <h3>Slides<a class="headerlink" href="#slides" title="Link to this heading">#</a></h3>
 </section>
 <section id="notebooks">
-<h3>Notebooks <a class="reference external" href="https://probabl-ai.github.io/forecasting/jupyterlite/lab"><img alt="Launch JupyterLite" src="_images/jupyterlite_badge.svg" /></a><a class="headerlink" href="#notebooks" title="Link to this heading">#</a></h3>
+<h3>Notebooks <a class="reference external" href="https://skrub-data.org/EuroSciPy2025/jupyterlite/lab"><img alt="Launch JupyterLite" src="_images/jupyterlite_badge.svg" /></a><a class="headerlink" href="#notebooks" title="Link to this heading">#</a></h3>
 <div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Forecasting with Machine Learning</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Skrub DataOps applied to forecasting timeseries</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/fetch_weather_data.html">Historical weather data download from open-meteo.com</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/feature_engineering.html">Feature engineering for electricity load forecasting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/notebooks/single_horizon_prediction.html">Single horizon predictive modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/multiple_horizons_prediction.html">Multiple horizons predictive modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/prediction_intervals.html">Computing prediction intervals using quantile regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="content/notebooks/direct_vs_recursive_forecasting.html">Direct vs Recursive Forecasting</a></li>
 </ul>
 </div>
 </section>
@@ -532,7 +528,7 @@ file as notebook, you need to right click on the file and select
   <div class="footer-item">
     
 <p class="component-author">
-By Guillaume Lemaitre & Olivier Grisel
+By Guillaume Lemaitre & Olivier Grisel & Riccardo Cappuzzo
 </p>
 
   </div>

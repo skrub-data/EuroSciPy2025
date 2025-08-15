@@ -1,12 +1,14 @@
-# Forecasting with machine learning
+# Skrub DataOps applied to forecasting timeseries
 
-This tutorial introduces how to use machine learning to forecast time series data.
+This tutorial introduces the `skrub`
+[DataOps](https://skrub-data.org/stable/userguide_data_ops.html) to a forecasting
+timeseries use case.
 
 ## Table of contents
 
 ### Slides
 
-### Notebooks [![Launch JupyterLite](/images/jupyterlite_badge.svg 'Our JupyterLite website')](https://probabl-ai.github.io/forecasting/jupyterlite/lab)
+### Notebooks [![Launch JupyterLite](/images/jupyterlite_badge.svg 'Our JupyterLite website')](https://skrub-data.org/EuroSciPy2025/jupyterlite/lab)
 
 ```{tableofcontents}
 ```

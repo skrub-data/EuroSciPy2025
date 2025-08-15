@@ -5,13 +5,11 @@
 # ## Environment setup
 #
 # We need to install some extra dependencies for this notebook if needed (when
-# running jupyterlite). We need the development version of skrub to be able to
-# use the skrub expressions.
+# running jupyterlite).
 
 # %%
 # %pip install -q https://pypi.anaconda.org/ogrisel/simple/polars/1.24.0/polars-1.24.0-cp39-abi3-emscripten_3_1_58_wasm32.whl
-# %pip install -q https://pypi.anaconda.org/ogrisel/simple/skrub/0.6.dev0/skrub-0.6.dev0-py3-none-any.whl
-# %pip install -q altair holidays plotly nbformat
+# %pip install -q altair holidays plotly nbformat skrub
 
 # %%
 import warnings
@@ -44,16 +42,13 @@ with open("feature_engineering_pipeline.pkl", "rb") as f:
 features = feature_engineering_pipeline["features"]
 targets = feature_engineering_pipeline["targets"]
 prediction_time = feature_engineering_pipeline["prediction_time"]
-horizons = feature_engineering_pipeline["horizons"]
-target_column_name_pattern = feature_engineering_pipeline["target_column_name_pattern"]
 
 # %% [markdown]
 #
 # For now, let's focus on the last horizon (24 hours) to train a model
 # predicting the electricity load at the next 24 hours.
 # %%
-horizon_of_interest = horizons[-1]  # Focus on the 24-hour horizon
-target_column_name = target_column_name_pattern.format(horizon=horizon_of_interest)
+target_column_name = "load_mw_horizon_24h"
 predicted_target_column_name = "predicted_" + target_column_name
 target = targets[target_column_name].skb.mark_as_y()
 target
@@ -89,13 +84,13 @@ features_with_dropped_cols = features.skb.apply(
                 "holiday": s.glob("cal_is_holiday*"),
                 "future_1h": s.glob("*_future_1h"),
                 "future_24h": s.glob("*_future_24h"),
-                "non_paris_weather": s.glob("weather_*") & ~s.glob("weather_*_paris_*"),
+                "non_paris_weather": s.glob("weather_*") & s.glob("weather_*_paris_*"),
             },
             name="dropped_cols",
         )
     )
 )
-
+# %%
 hgbr_predictions = features_with_dropped_cols.skb.apply(
     HistGradientBoostingRegressor(
         random_state=0,
@@ -111,9 +106,11 @@ hgbr_predictions = features_with_dropped_cols.skb.apply(
 )
 hgbr_predictions
 
+horizon_of_interest = 24  # Focus on the 24-hour horizon
+
 # %% [markdown]
 #
-# The `predictions` expression captures the whole expression graph that
+# The `predictions` DataOp captures the whole expression graph that
 # includes the feature engineering steps, the target variable, and the model
 # training step.
 #
@@ -129,7 +126,7 @@ hgbr_predictions.skb.get_data().keys()
 # follows:
 
 # %%
-hgbr_pipeline = hgbr_predictions.skb.get_pipeline()
+hgbr_pipeline = hgbr_predictions.skb.make_learner()
 hgbr_pipeline.describe_params()
 
 # %% [markdown]
@@ -143,7 +140,7 @@ hgbr_pipeline.describe_params()
 # %% [markdown]
 #
 # Since we passed input values to all the upstream `skrub` variables, `skrub`
-# automatically evaluates the whole expression graph graph (train and predict
+# automatically evaluates the whole DataOps graph (train and predict
 # on the same data) so that we can interactively check that everything will
 # work as expected.
 #
@@ -201,7 +198,7 @@ for fold_idx, (train_idx, test_idx) in enumerate(
 #
 # Once the cross-validation strategy is defined, we pass it to the
 # `cross_validate` function provided by `skrub` to compute the cross-validated
-# scores. Here, we compute the mean absolute percentage error that is easily
+# scores. Here, we compute the mean absolute percentage error because it is easily
 # interpretable and customary for regression tasks with a strictly positive
 # target variable such as electricity load forecasting.
 #
@@ -214,9 +211,10 @@ for fold_idx, (train_idx, test_idx) in enumerate(
 # predicts the mean of the target variable for all observations, irrespective
 # of the features.
 #
-# No that in general, a deviance score of 1.0 is not reachable since it
+# Note that in general, a deviance score of 1.0 is not reachable since it
 # corresponds to a model that always predicts the target value exactly
-# for all observations. In practice, because there is always a fraction of the
+# for all observations. In practice, this does not happen because there is always
+# a fraction of the
 # variability in the target variable that is not explained by the information
 # available to construct the features.
 
@@ -234,9 +232,9 @@ hgbr_cv_results = hgbr_predictions.skb.cross_validate(
         "d2_gamma": make_scorer(d2_tweedie_score, power=2.0),
     },
     return_train_score=True,
-    return_pipeline=True,
+    return_learner=True,
     verbose=1,
-    n_jobs=-1,
+    n_jobs=4,
 )
 hgbr_cv_results.round(3)
 
@@ -264,7 +262,7 @@ hgbr_cv_results.round(3)
 
 # %%
 hgbr_cv_predictions = collect_cv_predictions(
-    hgbr_cv_results["pipeline"], ts_cv_5, hgbr_predictions, prediction_time
+    hgbr_cv_results["learner"], ts_cv_5, hgbr_predictions, prediction_time
 )
 hgbr_cv_predictions[0]
 
@@ -275,13 +273,9 @@ hgbr_cv_predictions[0]
 # visualization to the last 7 days of the fold.
 
 # %%
-altair.Chart(
-    hgbr_cv_predictions[0].tail(24 * 7)
-).transform_fold(
+altair.Chart(hgbr_cv_predictions[0].tail(24 * 7)).transform_fold(
     ["load_mw", "predicted_load_mw"],
-).mark_line(
-    tooltip=True
-).encode(
+).mark_line(tooltip=True).encode(
     x="prediction_time:T", y="value:Q", color="key:N"
 ).interactive()
 
@@ -356,7 +350,7 @@ plot_binned_residuals(hgbr_cv_predictions, by="month").interactive().properties(
 ts_cv_2 = TimeSeriesSplit(
     n_splits=2, test_size=test_size, max_train_size=max_train_size, gap=24
 )
-# randomized_search_hgbr = hgbr_predictions.skb.get_randomized_search(
+# randomized_search_hgbr = hgbr_predictions.skb.make_randomized_search(
 #     cv=ts_cv_2,
 #     scoring="r2",
 #     n_iter=100,
@@ -364,7 +358,8 @@ ts_cv_2 = TimeSeriesSplit(
 #     verbose=1,
 #     n_jobs=-1,
 # )
-# # %%
+
+# %%
 # randomized_search_hgbr.results_.round(3)
 
 # %%
@@ -372,20 +367,20 @@ ts_cv_2 = TimeSeriesSplit(
 # write_json(fig, "parallel_coordinates_hgbr.json")
 
 # %%
-fig = read_json("parallel_coordinates_hgbr.json")
-fig.update_layout(margin=dict(l=200))
+# fig = read_json("parallel_coordinates_hgbr.json")
+# fig.update_layout(margin=dict(l=200))
 
 # %%
 # nested_cv_results = skrub.cross_validate(
-#     environment=predictions.skb.get_data(),
-#     pipeline=randomized_search,
+#     environment=hgbr_predictions.skb.get_data(),
+#     learner=randomized_search_hgbr,
 #     cv=ts_cv_5,
 #     scoring={
 #         "r2": get_scorer("r2"),
 #         "mape": make_scorer(mean_absolute_percentage_error),
 #     },
 #     n_jobs=-1,
-#     return_pipeline=True,
+#     return_learner=True,
 # ).round(3)
 # nested_cv_results
 
@@ -501,9 +496,9 @@ cv_results_ridge = predictions_ridge.skb.cross_validate(
         "mape": make_scorer(mean_absolute_percentage_error),
     },
     return_train_score=True,
-    return_pipeline=True,
+    return_learner=True,
     verbose=1,
-    n_jobs=-1,
+    n_jobs=4,
 )
 
 # %% [markdown]
@@ -533,15 +528,13 @@ cv_results_ridge.round(3)
 
 # %%
 cv_predictions_ridge = collect_cv_predictions(
-    cv_results_ridge["pipeline"], ts_cv_5, predictions_ridge, prediction_time
+    cv_results_ridge["learner"], ts_cv_5, predictions_ridge, prediction_time
 )
 
 # %%
 altair.Chart(cv_predictions_ridge[0].tail(24 * 7)).transform_fold(
     ["load_mw", "predicted_load_mw"],
-).mark_line(
-    tooltip=True
-).encode(
+).mark_line(tooltip=True).encode(
     x="prediction_time:T", y="value:Q", color="key:N"
 ).interactive()
 
@@ -578,13 +571,13 @@ plot_reliability_diagram(cv_predictions_ridge).interactive().properties(
 # expensive, we are reloading the results of the parallel coordinates plot.
 
 # %%
-# randomized_search_ridge = predictions_ridge.skb.get_randomized_search(
+# randomized_search_ridge = predictions_ridge.skb.make_randomized_search(
 #     cv=ts_cv_2,
 #     scoring="r2",
 #     n_iter=100,
 #     fitted=True,
 #     verbose=1,
-#     n_jobs=-1,
+#     n_jobs=4,
 # )
 
 # %%
@@ -610,14 +603,14 @@ fig.update_layout(margin=dict(l=200))
 # %%
 # nested_cv_results_ridge = skrub.cross_validate(
 #     environment=predictions_ridge.skb.get_data(),
-#     pipeline=randomized_search_ridge,
+#     learner=randomized_search_ridge,
 #     cv=ts_cv_5,
 #     scoring={
 #         "r2": get_scorer("r2"),
 #         "mape": make_scorer(mean_absolute_percentage_error),
 #     },
-#     n_jobs=-1,
-#     return_pipeline=True,
+#     n_jobs=4,
+#     return_learner=True,
 # ).round(3)
 
 # %%

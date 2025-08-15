@@ -1,0 +1,327 @@
+---
+title: "Skrub: ML with Dataframes"
+title-block-banner: true
+date: 2025-08-18
+subtitle: "Tutorial at EuroSciPy 2025"
+author: "Riccardo Cappuzzo, Guillaume Lemaitre"
+format: 
+    revealjs:
+        slide-number: c/t
+        show-slide-number: all
+        preview-links: auto
+        embed-resources: false
+        transition: slide
+        theme: [simple]
+        logo: images/skrub.svg
+        css: style.css
+incremental: true
+
+---
+# Program for the tutorial
+
+1. Short introduction to `skrub`
+2. Simple `skrub` transformers
+3. Starting with the `skrub` DataOps
+4. The tutorial! **Forecasting with `skrub` DataOps and Polars**
+
+# Boost your productivity with `skrub`! {auto-animate="true"}
+
+`skrub` simplifies many tedious data preparation operations
+
+## An example pipeline
+1. Gather some data
+2. Explore the data
+3. Pre-process the data 
+4. Perform feature engineering
+5. Build a scikit-learn pipeline
+6. ???
+7. Profit?  
+
+## Exploring the data with `skrub` {.smaller auto-animate="true"}
+
+```{.python}
+from skrub import TableReport
+TableReport(employee_salaries)
+```
+[Preview](https://skrub-data.org/skrub-reports/examples/employee_salaries.html){preview-link="true"}
+
+
+::: {.fragment}
+::: {.nonincremental}
+Main features:
+
+- Obtain high-level statistics about the data
+- Explore the distribution of values and find outliers
+- Discover highly correlated columns 
+- Export and share the report as an `html` file
+:::
+:::
+
+## Lightweight data cleaning: `Cleaner` {.smaller auto-animate="true"}
+
+```{python}
+#| echo: true
+from skrub.datasets import fetch_employee_salaries
+from pprint import pprint
+import pandas as pd
+
+dataset = fetch_employee_salaries()
+employees, salaries = dataset.X, dataset.y
+
+df = pd.DataFrame(employees)
+```
+
+## Lightweight data cleaning: `Cleaner` {.smaller auto-animate="true"}
+
+```{python}
+#| echo: true
+from skrub import Cleaner
+cleaner = Cleaner(drop_if_constant=True, datetime_format='%d/%m/%Y')
+df_cleaned = cleaner.fit_transform(df)
+display(df_cleaned)
+```
+
+## Encoding datetime features `skrub.DatetimeEncoder` {auto-animate="true" .smaller}
+```{python}
+#| echo: true
+from skrub import DatetimeEncoder, ToDatetime
+import pandas as pd
+import numpy as np
+
+data = {
+    'Constant int': [1, 1, 1],  # Single unique value
+    'B': [2, 3, 2],  # Multiple unique values
+    'Constant str': ['x', 'x', 'x'],  # Single unique value
+    'D': [4, 5, 6],  # Multiple unique values
+    'All nan': [np.nan, np.nan, np.nan],  # All missing values 
+    'All empty': ['', '', ''],  # All empty strings
+    'Date': ['01/01/2023', '02/01/2023', '03/01/2023'],
+}
+
+df = pd.DataFrame(data)
+de = DatetimeEncoder(periodic_encoding="circular")
+X_date = ToDatetime().fit_transform(df["Date"])
+X_enc = de.fit_transform(X_date)
+print(X_enc)
+```
+
+## What periodic features look like
+![](images/periodic_features.png){fig-align="center"}
+
+
+## Encoding _all the features_ with `skrub.TableVectorizer` {.smaller auto-animate="true"}
+
+![](images/skrub-table-vectorizer.png)
+
+## Build a predictive pipeline {auto-animate="true" visibility="uncounted"}
+```{.python }
+from sklearn.linear_model import Ridge
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.compose import make_column_selector as selector
+from sklearn.compose import make_column_transformer
+
+categorical_columns = selector(dtype_include=object)(employees)
+numerical_columns = selector(dtype_exclude=object)(employees)
+
+ct = make_column_transformer(
+      (StandardScaler(),
+       numerical_columns),
+      (OneHotEncoder(handle_unknown="ignore"),
+       categorical_columns))
+
+model = make_pipeline(ct, SimpleImputer(), Ridge())
+```
+## Build a predictive pipeline with `tabular_pipeline` {auto-animate="true"}
+```{python}
+#| echo: true
+import skrub
+from sklearn.linear_model import Ridge
+model = skrub.tabular_pipeline(Ridge())
+```
+
+## We now have a pipeline! {.smaller}
+
+1. Gather some data
+    - `skrub.datasets`, or user data
+2. Explore the data
+    - `skrub.TableReport`
+3. Pre-process the data 
+    - `skrub.TableVectorizer`, `Cleaner`, ... 
+4. Perform feature engineering
+    - `DatetimeEncoder`, `TextEncoder`, `StringEncoder `...
+5. Build a scikit-learn pipeline
+    - `tabular_pipeline`, `sklearn.pipeline.make_pipeline` ... 
+6. ???
+7. Profit 📈 
+
+
+# What if we had a *better* pipeline? 
+
+## A realistic scenario
+A data scientist needs to train a ML model, but features are spread across 
+multiple tables. 
+
+::: {.fragment}
+::: {.callout-warning}
+Many issues with this! 
+:::
+
+:::
+
+::: {.incremental}
+- `scikit-learn` pipelines support only a single feature matrix `X`
+- Dataframe operations cannot be tuned
+- Data leakage must be accounted for
+- Persisting and reproducing operations is complex
+:::
+
+## `skrub` DataOps
+When a normal pipe is not enough...
+
+::: {.fragment style="font-size:2em;"}
+... the `skrub` DataOps come to the rescue 🚒
+:::
+
+## DataOps...
+- Extend the `scikit-learn` machinery to complex multi-table operations
+- Track all operations with a computational graph
+- Can tune any operation in the data plan
+- Can be persisted and shared easily by generating a `learner`
+
+## DataOps, DataOps plans, `learner`s: oh my!  
+- A `DataOp` (singular) wraps a single operation, and can be combined and concatenated with other `DataOps`. 
+
+- We refer to a sequence and combination of `DataOps` as a `DataOps` plan.  
+
+- The `DataOps` plan can be exported as a standalone object called `learner`. The `learner` takes a dictionary of values rather than just `X` and `y`. 
+
+
+## How do DataOps work, though? 
+DataOps **wrap** around *user operations*, where user operations are:
+
+- any dataframe operation (e.g., merge, group by, aggregate etc.)
+- scikit-learn estimators (a Random Forest, RidgeCV etc.)
+- custom user code (load data from a path, fetch from an URL etc.)
+
+::: {.fragment}
+
+::: {.callout-important}
+DataOps _record_ user operations, so that they can later be _replayed_ in the same
+order and with the same arguments on unseen data. 
+:::
+::: 
+
+
+## Starting with the `DataOps`
+
+```{python}
+#| echo: true
+data = skrub.datasets.fetch_credit_fraud()
+
+baskets = skrub.var("baskets", data.baskets)
+X = baskets[["ID"]].skb.mark_as_X()
+y = baskets["fraud_flag"].skb.mark_as_y()
+
+products = skrub.var("products", data.products) # add a new variable
+```
+
+:::{.incremental}
+- `X`, `y`, `products` represent inputs to the pipeline.
+- `skrub` splits `X` and `y` when training. 
+:::
+
+##  Building a full data plan
+```{.python}
+from skrub import selectors as s
+from sklearn.ensemble import ExtraTreesClassifier  
+
+vectorizer = skrub.TableVectorizer(high_cardinality=skrub.StringEncoder(), n_jobs=-1)
+
+vectorized_products = products.skb.apply(vectorizer, cols=s.all() - "basket_ID")
+aggregated_products = vectorized_products.groupby("basket_ID").agg("mean").reset_index()
+
+features = X.merge(aggregated_products, left_on="ID", right_on="basket_ID")
+features = features.drop(columns=["ID", "basket_ID"])
+
+predictions = features.skb.apply(ExtraTreesClassifier(n_jobs=-1), y=y)
+```
+
+## Exporting the plan in a `learner` {.smaller}
+The data plan can be exported as a `learner`:
+```{.python}
+# anywhere
+learner = predictions.skb.make_learner()
+# search is a HPO object
+best_learner = search.skb.best_learner_
+```
+::: {.fragment}
+Then, the `learner` can be pickled ...
+```{.python}
+import pickle
+
+with open("learner.bin", "wb") as fp:
+    pickle.dump(learner, fp)
+```
+:::
+
+::: {.fragment}
+
+... and loaded
+
+```{.python}
+with open("learner.bin", "rb") as fp:
+    learner = pickle.load(fp)
+
+learner.predict({"baskets": new_baskets, "products": new_products})
+```
+:::
+
+
+## Hyperparameter tuning in a Data Plan 
+`skrub` implements four `choose_*` functions (and `optional`):
+
+- `choose_from`: select from the given list of options
+- `choose_int`: select an integer within a range
+- `choose_float`: select a float within a range
+- `choose_bool`: select a bool 
+- `optional`: chooses between a value or DataOp and no op
+
+
+## Hyperparameter tuning in a Data Plan  {auto-animate="true"}
+It's possible to nest these functions to create complex grids:
+```python
+X.skb.apply(
+    skrub.choose_from(
+        {
+            "PCA": PCA(n_components=skrub.choose_int(10, 30)),
+            "SelectKBest": SelectKBest(k=skrub.choose_int(10, 30))
+        }, name="dim_reduction"
+    )
+)
+```
+
+## Observe the impact of the hyperparameters {auto-animate="true"} 
+
+```{.python}
+search = pred.skb.get_randomized_search(scoring="roc_auc", fitted=True)
+
+search.plot_parallel_coord()
+```
+
+![](images/plot-parallel-coord.png){fig-align="center"}
+
+
+#  Getting involved
+::: {.nonincremental}
+- [Skrub website](https://skrub-data.org/stable/) (QR code below!)
+- [Skrub materials website](https://skrub-data.org/skrub-materials/index.html)
+- [Git repository](https://github.com/skrub-data/skrub/)
+- [Discord server](https://discord.gg/ABaPnm7fDC)
+- [Bluesky](https://bsky.app/profile/skrub-data.bsky.social)
+:::
+
+![](images/qr-code.png){.absolute bottom=0 right=0 width="250" height="250"}
+
+# Time for the tutorial ...

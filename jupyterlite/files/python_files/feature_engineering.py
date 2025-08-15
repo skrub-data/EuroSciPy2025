@@ -13,36 +13,31 @@
 # All these data sources cover a time range from March 23, 2021 to May 31,
 # 2025.
 #
-# Since our maximum forecasting horizon is 24 hours, we consider that the
+# Since our forecasting horizon is 24 hours, we consider that the
 # future weather data is known at a chosen prediction time. Similarly, the
 # holidays and calendar features are known at prediction time for any point in
 # the future.
+# We can also use the load data to engineer some lagged features and rolling
+# aggregations.
 #
-# Therefore, exogenous features derived from the weather and calendar data can
-# be used to engineer "future covariates". Since the load data is our
-# prediction target, we will can also use it to engineer "past covariates" such
-# as lagged features and rolling aggregations. The future values of the load
+#  The future values of the load
 # data (with respect to the prediction time) are used as targets for the
 # forecasting model.
 #
 # ## Environment setup
 #
 # We need to install some extra dependencies for this notebook if needed (when
-# running jupyterlite). We need the development version of skrub to be able to
-# use the skrub expressions.
+# running jupyterlite).
 
 # %%
 # %pip install -q https://pypi.anaconda.org/ogrisel/simple/polars/1.24.0/polars-1.24.0-cp39-abi3-emscripten_3_1_58_wasm32.whl
-# %pip install -q https://pypi.anaconda.org/ogrisel/simple/skrub/0.6.dev0/skrub-0.6.dev0-py3-none-any.whl
-# %pip install -q altair holidays plotly nbformat
+# %pip install -q altair holidays plotly nbformat skrub
 
 # %% [markdown]
 #
 # The following 3 imports are only needed to workaround some limitations when
 # using polars in a pyodide/jupyterlite notebook.
 #
-# TODO: remove those workarounds once pyodide 0.28 is released with support for
-# the latest polars version.
 
 # %%
 import tzdata  # noqa: F401
@@ -64,9 +59,9 @@ import holidays
 # range is in UTC timezone to avoid any ambiguity when joining with the weather
 # data that is also in UTC.
 #
-# We wrap the resulting polars dataframe in a `skrub` expression to benefit
+# We wrap the resulting polars dataframe in a `skrub` DataOp to benefit
 # from the built-in `skrub.TableReport` display in the notebook. Using the
-# `skrub` expression system will also be useful for other reasons: all
+# `skrub` DataOps will also be useful for other reasons: all
 # operations in this notebook chain operations chained together in a directed
 # acyclic graph that is automatically tracked by `skrub`. This allows us to
 # extract the resulting pipeline and apply it to new data later on, exactly
@@ -206,7 +201,30 @@ def prepare_french_calendar_data(time):
     )
 
 
-calendar = prepare_french_calendar_data(time)
+from skrub import DatetimeEncoder
+
+datetime_encoder = DatetimeEncoder(
+    add_weekday=True, add_day_of_year=True, add_total_seconds=False
+)
+
+
+@skrub.deferred
+def prepare_holidays(time):
+    fr_time = pl.col("time").dt.convert_time_zone("Europe/Paris")
+    fr_year_min = time.select(fr_time.dt.year().min()).item()
+    fr_year_max = time.select(fr_time.dt.year().max()).item()
+    holidays_fr = holidays.country_holidays(
+        "FR", years=range(fr_year_min, fr_year_max + 1)
+    )
+    return time.select(
+        fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
+    )
+
+
+time_encoded = time.rename({"time": "cal"}).skb.apply(datetime_encoder)
+
+calendar = time.skb.concat([time_encoded, prepare_holidays(time)], axis=1)
+# calendar = prepare_french_calendar_data(time)
 calendar
 
 
@@ -216,6 +234,7 @@ calendar
 #
 # Finally we load the electricity load data. This data will both be used as a
 # target variable but also to craft some lagged and window-aggregated features.
+
 # %%
 @skrub.deferred
 def load_electricity_load_data(time, data_source_folder):
@@ -279,18 +298,6 @@ electricity.filter(
 
 # %% [markdown]
 #
-# **Remark**: interpolating missing values in the target column that we will
-# use to train and evaluate our models can bias the learning problem and make
-# our cross-validation metrics misrepresent the performance of the deployed
-# predictive system.
-#
-# A potentially better approach would be to keep the missing values in the
-# dataset and use a sample_weight mask to keep a contiguous dataset while
-# ignoring the time periods with missing values when training or evaluating the
-# model.
-
-# %% [markdown]
-#
 # ## Lagged features
 #
 # We can now create some lagged features from the electricity load data.
@@ -341,115 +348,6 @@ altair.Chart(electricity_lagged.tail(100).skb.preview()).transform_fold(
     ],
     as_=["key", "load_mw"],
 ).mark_line(tooltip=True).encode(x="time:T", y="load_mw:Q", color="key:N").interactive()
-
-# %% [markdown]
-#
-# ## Important remark about lagged features engineering and system lag
-#
-# When working with historical data, we often have access to all the past
-# measurements in the dataset. However, when we want to use the lagged features
-# in a forecasting model, we need to be careful about the length of the
-# **system lag**: the time between a timestamped measurement is made in the
-# real world and the time the record is made available to the downstream
-# application (in our case, a deployed predictive pipeline).
-#
-# System lag is rarely explicitly represented in the data sources even if such
-# delay can be as large as several hours or even days and can sometimes be
-# irregular. For instance, if there is a human intervention in the data
-# recording process, holidays and weekends can punctually add significant
-# delay.
-#
-# If the system lag is larger than the maximum feature engineering lag, the
-# resulting features be filled with missing values once deployed. More
-# importantly, if the system lag is not handled explicitly, those resulting
-# missing values will only be present in the features computed for the
-# deployed system but not present in the features computed to train and
-# backtest the system before deployment.
-#
-# This structural discrepancy can severely degrade the performance of the
-# deployed model compared to the performance estimated from backtesting on the
-# historical data.
-#
-# We will set this problem aside for now but discuss it again in a later
-# section of this tutorial.
-
-# %% [markdown]
-# ## Investigating outliers in the lagged features
-#
-# Let's use the `skrub.TableReport` tool to look at the plots of the marginal
-# distribution of the lagged features.
-
-# %%
-from skrub import TableReport
-
-TableReport(electricity_lagged.skb.eval())
-
-# %% [markdown]
-#
-# Let's extract the dates where the inter-quartile range of the load is
-# greater than 15,000 MW.
-
-# %%
-electricity_lagged.filter(pl.col("load_mw_iqr_7d") > 15_000)[
-    "time"
-].dt.date().unique().sort().to_list().skb.eval()
-
-# %% [markdown]
-#
-# We observe 3 date ranges with high inter-quartile range. Let's plot the
-# electricity load and the lagged features for the first data range along with
-# the weather data for Paris.
-
-# %%
-altair.Chart(
-    electricity_lagged.filter(
-        (pl.col("time") > pl.datetime(2021, 12, 1, time_zone="UTC"))
-        & (pl.col("time") < pl.datetime(2021, 12, 31, time_zone="UTC"))
-    ).skb.eval()
-).transform_fold(
-    [
-        "load_mw",
-        "load_mw_iqr_7d",
-    ],
-).mark_line(
-    tooltip=True
-).encode(
-    x="time:T", y="value:Q", color="key:N"
-).interactive()
-
-# %%
-altair.Chart(
-    all_city_weather.filter(
-        (pl.col("time") > pl.datetime(2021, 12, 1, time_zone="UTC"))
-        & (pl.col("time") < pl.datetime(2021, 12, 31, time_zone="UTC"))
-    ).skb.eval()
-).transform_fold(
-    [f"weather_temperature_2m_{city_name}" for city_name in city_names.skb.eval()],
-).mark_line(
-    tooltip=True
-).encode(
-    x="time:T", y="value:Q", color="key:N"
-).interactive()
-
-# %% [markdown]
-#
-# Based on the plots above, we can see that the electricity load was high just
-# before the Christmas holidays due to low temperatures. Then the load suddenly
-# dropped because temperatures went higher right at the start of the
-# end-of-year holidays.
-#
-# So those outliers do not seem to be caused to a data quality issue but rather
-# due to a real change in the electricity load demand. We could conduct similar
-# analysis for the other date ranges with high inter-quartile range but we will
-# skip that for now.
-#
-# If we had observed significant data quality issues over extended periods of
-# time could have been addressed by removing the corresponding rows from the
-# dataset. However, this would make the lagged and windowing feature
-# engineering challenging to reimplement correctly. A better approach would be
-# to keep a contiguous dataset assign 0 weights to the affected rows when
-# fitting or evaluating the trained models via the use of the `sample_weight`
-# parameter.
 
 # %% [markdown]
 # ## Final dataset
@@ -541,28 +439,20 @@ features
 # Let's build training and evaluation targets for all possible horizons from 1
 # to 24 hours.
 
+
 # %%
-horizons = range(1, 25)
-target_column_name_pattern = "load_mw_horizon_{horizon}h"
-
-
 @skrub.deferred
-def build_targets(prediction_time, electricity, horizons):
+def build_targets(prediction_time, electricity):
     return prediction_time.join(
         electricity.with_columns(
-            [
-                pl.col("load_mw")
-                .shift(-h)
-                .alias(target_column_name_pattern.format(horizon=h))
-                for h in horizons
-            ]
+            pl.col("load_mw").shift(-24).alias("load_mw_horizon_24h")
         ),
         left_on="prediction_time",
         right_on="time",
     )
 
 
-targets = build_targets(prediction_time, electricity, horizons)
+targets = build_targets(prediction_time, electricity)
 targets
 
 # %% [markdown]
@@ -579,8 +469,8 @@ with open("feature_engineering_pipeline.pkl", "wb") as f:
             "features": features,
             "targets": targets,
             "prediction_time": prediction_time,
-            "horizons": horizons,
-            "target_column_name_pattern": target_column_name_pattern,
         },
         f,
     )
+
+# %%
