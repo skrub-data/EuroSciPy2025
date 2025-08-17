@@ -8,6 +8,8 @@ timeseries use case.
 
 ### Slides
 
+- [Introductory concepts](https://skrub-data.org/EuroSciPy2025/slides/index.html)
+
 ### Notebooks [![Launch JupyterLite](/images/jupyterlite_badge.svg 'Our JupyterLite website')](https://skrub-data.org/EuroSciPy2025/jupyterlite/lab)
 
 ```{tableofcontents}

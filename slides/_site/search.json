@@ -1,0 +1,149 @@
+[
+  {
+    "objectID": "slides.html#an-example-pipeline",
+    "href": "slides.html#an-example-pipeline",
+    "title": "Skrub: ML with Dataframes",
+    "section": "An example pipeline",
+    "text": "An example pipeline\n\nGather some data\nExplore the data\nPre-process the data\nPerform feature engineering\nBuild a scikit-learn pipeline\n???\nProfit?"
+  },
+  {
+    "objectID": "slides.html#exploring-the-data-with-skrub",
+    "href": "slides.html#exploring-the-data-with-skrub",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Exploring the data with skrub",
+    "text": "Exploring the data with skrub\nfrom skrub import TableReport\nTableReport(employee_salaries)\nPreview\n\nMain features:\n\nObtain high-level statistics about the data\nExplore the distribution of values and find outliers\nDiscover highly correlated columns\nExport and share the report as an html file"
+  },
+  {
+    "objectID": "slides.html#lightweight-data-cleaning-cleaner",
+    "href": "slides.html#lightweight-data-cleaning-cleaner",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Lightweight data cleaning: Cleaner",
+    "text": "Lightweight data cleaning: Cleaner\n\nfrom skrub.datasets import fetch_employee_salaries\nfrom pprint import pprint\nimport pandas as pd\n\ndataset = fetch_employee_salaries()\nemployees, salaries = dataset.X, dataset.y\n\ndf = pd.DataFrame(employees)\n\nDownloading 'employee_salaries' from https://github.com/skrub-data/skrub-data-files/raw/refs/heads/main/employee_salaries.zip (attempt 1/3)"
+  },
+  {
+    "objectID": "slides.html#lightweight-data-cleaning-cleaner-1",
+    "href": "slides.html#lightweight-data-cleaning-cleaner-1",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Lightweight data cleaning: Cleaner",
+    "text": "Lightweight data cleaning: Cleaner\n\nfrom skrub import Cleaner\ncleaner = Cleaner(drop_if_constant=True, datetime_format='%d/%m/%Y')\ndf_cleaned = cleaner.fit_transform(df)\ndisplay(df_cleaned)\n\n\n\n\n\n\n\n\ngender\ndepartment\ndepartment_name\ndivision\nassignment_category\nemployee_position_title\ndate_first_hired\nyear_first_hired\n\n\n\n\n0\nF\nPOL\nDepartment of Police\nMSB Information Mgmt and Tech Division Records...\nFulltime-Regular\nOffice Services Coordinator\n09/22/1986\n1986\n\n\n1\nM\nPOL\nDepartment of Police\nISB Major Crimes Division Fugitive Section\nFulltime-Regular\nMaster Police Officer\n09/12/1988\n1988\n\n\n2\nF\nHHS\nDepartment of Health and Human Services\nAdult Protective and Case Management Services\nFulltime-Regular\nSocial Worker IV\n11/19/1989\n1989\n\n\n3\nM\nCOR\nCorrection and Rehabilitation\nPRRS Facility and Security\nFulltime-Regular\nResident Supervisor II\n05/05/2014\n2014\n\n\n4\nM\nHCA\nDepartment of Housing and Community Affairs\nAffordable Housing Programs\nFulltime-Regular\nPlanning Specialist III\n03/05/2007\n2007\n\n\n...\n...\n...\n...\n...\n...\n...\n...\n...\n\n\n9223\nF\nHHS\nDepartment of Health and Human Services\nSchool Based Health Centers\nFulltime-Regular\nCommunity Health Nurse II\n11/03/2015\n2015\n\n\n9224\nF\nFRS\nFire and Rescue Services\nHuman Resources Division\nFulltime-Regular\nFire/Rescue Division Chief\n11/28/1988\n1988\n\n\n9225\nM\nHHS\nDepartment of Health and Human Services\nChild and Adolescent Mental Health Clinic Serv...\nParttime-Regular\nMedical Doctor IV - Psychiatrist\n04/30/2001\n2001\n\n\n9226\nM\nCCL\nCounty Council\nCouncil Central Staff\nFulltime-Regular\nManager II\n09/05/2006\n2006\n\n\n9227\nM\nDLC\nDepartment of Liquor Control\nLicensure, Regulation and Education\nFulltime-Regular\nAlcohol/Tobacco Enforcement Specialist II\n01/30/2012\n2012\n\n\n\n\n9228 rows × 8 columns"
+  },
+  {
+    "objectID": "slides.html#encoding-datetime-features-skrub.datetimeencoder",
+    "href": "slides.html#encoding-datetime-features-skrub.datetimeencoder",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Encoding datetime features skrub.DatetimeEncoder",
+    "text": "Encoding datetime features skrub.DatetimeEncoder\n\nfrom skrub import DatetimeEncoder, ToDatetime\nimport pandas as pd\nimport numpy as np\n\ndata = {\n    'Constant int': [1, 1, 1],  # Single unique value\n    'B': [2, 3, 2],  # Multiple unique values\n    'Constant str': ['x', 'x', 'x'],  # Single unique value\n    'D': [4, 5, 6],  # Multiple unique values\n    'All nan': [np.nan, np.nan, np.nan],  # All missing values \n    'All empty': ['', '', ''],  # All empty strings\n    'Date': ['01/01/2023', '02/01/2023', '03/01/2023'],\n}\n\ndf = pd.DataFrame(data)\nde = DatetimeEncoder(periodic_encoding=\"circular\")\nX_date = ToDatetime().fit_transform(df[\"Date\"])\nX_enc = de.fit_transform(X_date)\nprint(X_enc)\n\n   Date_year  Date_total_seconds  Date_month_circular_0  \\\n0     2023.0        1.672531e+09               0.500000   \n1     2023.0        1.675210e+09               0.866025   \n2     2023.0        1.677629e+09               1.000000   \n\n   Date_month_circular_1  Date_day_circular_0  Date_day_circular_1  \n0           8.660254e-01             0.207912             0.978148  \n1           5.000000e-01             0.207912             0.978148  \n2           6.123234e-17             0.207912             0.978148"
+  },
+  {
+    "objectID": "slides.html#what-periodic-features-look-like",
+    "href": "slides.html#what-periodic-features-look-like",
+    "title": "Skrub: ML with Dataframes",
+    "section": "What periodic features look like",
+    "text": "What periodic features look like"
+  },
+  {
+    "objectID": "slides.html#encoding-all-the-features-with-skrub.tablevectorizer",
+    "href": "slides.html#encoding-all-the-features-with-skrub.tablevectorizer",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Encoding all the features with skrub.TableVectorizer",
+    "text": "Encoding all the features with skrub.TableVectorizer"
+  },
+  {
+    "objectID": "slides.html#build-a-predictive-pipeline",
+    "href": "slides.html#build-a-predictive-pipeline",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Build a predictive pipeline",
+    "text": "Build a predictive pipeline\nfrom sklearn.linear_model import Ridge\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.compose import make_column_selector as selector\nfrom sklearn.compose import make_column_transformer\n\ncategorical_columns = selector(dtype_include=object)(employees)\nnumerical_columns = selector(dtype_exclude=object)(employees)\n\nct = make_column_transformer(\n      (StandardScaler(),\n       numerical_columns),\n      (OneHotEncoder(handle_unknown=\"ignore\"),\n       categorical_columns))\n\nmodel = make_pipeline(ct, SimpleImputer(), Ridge())"
+  },
+  {
+    "objectID": "slides.html#build-a-predictive-pipeline-with-tabular_pipeline",
+    "href": "slides.html#build-a-predictive-pipeline-with-tabular_pipeline",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Build a predictive pipeline with tabular_pipeline",
+    "text": "Build a predictive pipeline with tabular_pipeline\n\nimport skrub\nfrom sklearn.linear_model import Ridge\nmodel = skrub.tabular_pipeline(Ridge())"
+  },
+  {
+    "objectID": "slides.html#we-now-have-a-pipeline",
+    "href": "slides.html#we-now-have-a-pipeline",
+    "title": "Skrub: ML with Dataframes",
+    "section": "We now have a pipeline!",
+    "text": "We now have a pipeline!\n\nGather some data\n\nskrub.datasets, or user data\n\nExplore the data\n\nskrub.TableReport\n\nPre-process the data\n\nskrub.TableVectorizer, Cleaner, …\n\nPerform feature engineering\n\nDatetimeEncoder, TextEncoder, StringEncoder…\n\nBuild a scikit-learn pipeline\n\ntabular_pipeline, sklearn.pipeline.make_pipeline …\n\n???\nProfit 📈"
+  },
+  {
+    "objectID": "slides.html#a-realistic-scenario",
+    "href": "slides.html#a-realistic-scenario",
+    "title": "Skrub: ML with Dataframes",
+    "section": "A realistic scenario",
+    "text": "A realistic scenario\nA data scientist needs to train a ML model, but features are spread across multiple tables.\n\n\n\n\n\n\n\nWarning\n\n\nMany issues with this!\n\n\n\n\n\nscikit-learn pipelines support only a single feature matrix X\nDataframe operations cannot be tuned\nData leakage must be accounted for\nPersisting and reproducing operations is complex"
+  },
+  {
+    "objectID": "slides.html#skrub-dataops",
+    "href": "slides.html#skrub-dataops",
+    "title": "Skrub: ML with Dataframes",
+    "section": "skrub DataOps",
+    "text": "skrub DataOps\nWhen a normal pipe is not enough…\n\n… the skrub DataOps come to the rescue 🚒"
+  },
+  {
+    "objectID": "slides.html#dataops",
+    "href": "slides.html#dataops",
+    "title": "Skrub: ML with Dataframes",
+    "section": "DataOps…",
+    "text": "DataOps…\n\nExtend the scikit-learn machinery to complex multi-table operations\nTrack all operations with a computational graph\nCan tune any operation in the data plan\nCan be persisted and shared easily by generating a learner"
+  },
+  {
+    "objectID": "slides.html#dataops-dataops-plans-learners-oh-my",
+    "href": "slides.html#dataops-dataops-plans-learners-oh-my",
+    "title": "Skrub: ML with Dataframes",
+    "section": "DataOps, DataOps plans, learners: oh my!",
+    "text": "DataOps, DataOps plans, learners: oh my!\n\nA DataOp (singular) wraps a single operation, and can be combined and concatenated with other DataOps.\nWe refer to a sequence and combination of DataOps as a DataOps plan.\nThe DataOps plan can be exported as a standalone object called learner. The learner takes a dictionary of values rather than just X and y."
+  },
+  {
+    "objectID": "slides.html#how-do-dataops-work-though",
+    "href": "slides.html#how-do-dataops-work-though",
+    "title": "Skrub: ML with Dataframes",
+    "section": "How do DataOps work, though?",
+    "text": "How do DataOps work, though?\nDataOps wrap around user operations, where user operations are:\n\nany dataframe operation (e.g., merge, group by, aggregate etc.)\nscikit-learn estimators (a Random Forest, RidgeCV etc.)\ncustom user code (load data from a path, fetch from an URL etc.)\n\n\n\n\n\n\n\n\nImportant\n\n\nDataOps record user operations, so that they can later be replayed in the same order and with the same arguments on unseen data."
+  },
+  {
+    "objectID": "slides.html#starting-with-the-dataops",
+    "href": "slides.html#starting-with-the-dataops",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Starting with the DataOps",
+    "text": "Starting with the DataOps\n\ndata = skrub.datasets.fetch_credit_fraud()\n\nbaskets = skrub.var(\"baskets\", data.baskets)\nX = baskets[[\"ID\"]].skb.mark_as_X()\ny = baskets[\"fraud_flag\"].skb.mark_as_y()\n\nproducts = skrub.var(\"products\", data.products) # add a new variable\n\nDownloading 'credit_fraud' from https://github.com/skrub-data/skrub-data-files/raw/refs/heads/main/credit_fraud.zip (attempt 1/3)\n\n\n\nX, y, products represent inputs to the pipeline.\nskrub splits X and y when training."
+  },
+  {
+    "objectID": "slides.html#building-a-full-data-plan",
+    "href": "slides.html#building-a-full-data-plan",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Building a full data plan",
+    "text": "Building a full data plan\nfrom skrub import selectors as s\nfrom sklearn.ensemble import ExtraTreesClassifier  \n\nvectorizer = skrub.TableVectorizer(high_cardinality=skrub.StringEncoder(), n_jobs=-1)\n\nvectorized_products = products.skb.apply(vectorizer, cols=s.all() - \"basket_ID\")\naggregated_products = vectorized_products.groupby(\"basket_ID\").agg(\"mean\").reset_index()\n\nfeatures = X.merge(aggregated_products, left_on=\"ID\", right_on=\"basket_ID\")\nfeatures = features.drop(columns=[\"ID\", \"basket_ID\"])\n\npredictions = features.skb.apply(ExtraTreesClassifier(n_jobs=-1), y=y)"
+  },
+  {
+    "objectID": "slides.html#exporting-the-plan-in-a-learner",
+    "href": "slides.html#exporting-the-plan-in-a-learner",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Exporting the plan in a learner",
+    "text": "Exporting the plan in a learner\nThe data plan can be exported as a learner:\n# anywhere\nlearner = predictions.skb.make_learner()\n# search is a HPO object\nbest_learner = search.skb.best_learner_\n\nThen, the learner can be pickled …\nimport pickle\n\nwith open(\"learner.bin\", \"wb\") as fp:\n    pickle.dump(learner, fp)\n\n\n… and loaded\nwith open(\"learner.bin\", \"rb\") as fp:\n    learner = pickle.load(fp)\n\nlearner.predict({\"baskets\": new_baskets, \"products\": new_products})"
+  },
+  {
+    "objectID": "slides.html#hyperparameter-tuning-in-a-data-plan",
+    "href": "slides.html#hyperparameter-tuning-in-a-data-plan",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Hyperparameter tuning in a Data Plan",
+    "text": "Hyperparameter tuning in a Data Plan\nskrub implements four choose_* functions (and optional):\n\nchoose_from: select from the given list of options\nchoose_int: select an integer within a range\nchoose_float: select a float within a range\nchoose_bool: select a bool\noptional: chooses between a value or DataOp and no op"
+  },
+  {
+    "objectID": "slides.html#hyperparameter-tuning-in-a-data-plan-1",
+    "href": "slides.html#hyperparameter-tuning-in-a-data-plan-1",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Hyperparameter tuning in a Data Plan",
+    "text": "Hyperparameter tuning in a Data Plan\nIt’s possible to nest these functions to create complex grids:\nX.skb.apply(\n    skrub.choose_from(\n        {\n            \"PCA\": PCA(n_components=skrub.choose_int(10, 30)),\n            \"SelectKBest\": SelectKBest(k=skrub.choose_int(10, 30))\n        }, name=\"dim_reduction\"\n    )\n)"
+  },
+  {
+    "objectID": "slides.html#observe-the-impact-of-the-hyperparameters",
+    "href": "slides.html#observe-the-impact-of-the-hyperparameters",
+    "title": "Skrub: ML with Dataframes",
+    "section": "Observe the impact of the hyperparameters",
+    "text": "Observe the impact of the hyperparameters\nsearch = pred.skb.get_randomized_search(scoring=\"roc_auc\", fitted=True)\n\nsearch.plot_parallel_coord()"
+  }
+]

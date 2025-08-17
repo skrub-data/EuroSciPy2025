@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<link href="./images/skrub.svg" rel="icon" type="image/svg+xml">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.33">
+
+  <meta name="author" content="Riccardo Cappuzzo, Guillaume Lemaitre">
+  <meta name="dcterms.date" content="2025-08-18">
+  <title>Skrub learning materials – Skrub: ML with Dataframes</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-bf4713cdd2c955a48355fa2d86953ae4.css">
+  <link rel="stylesheet" href="style.css">
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Skrub: ML with Dataframes</h1>
+  <p class="subtitle">Tutorial at EuroSciPy 2025</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Riccardo Cappuzzo, Guillaume Lemaitre 
+</div>
+</div>
+</div>
+
+  <p class="date">2025-08-18</p>
+</section>
+<section id="program-for-the-tutorial" class="title-slide slide level1 center">
+<h1>Program for the tutorial</h1>
+<ol type="1">
+<li class="fragment">Short introduction to <code>skrub</code></li>
+<li class="fragment">Simple <code>skrub</code> transformers</li>
+<li class="fragment">Starting with the <code>skrub</code> DataOps</li>
+<li class="fragment">The tutorial! <strong>Forecasting with <code>skrub</code> DataOps and Polars</strong></li>
+</ol>
+</section>
+
+<section>
+<section id="boost-your-productivity-with-skrub" class="title-slide slide level1 center" data-auto-animate="true">
+<h1 data-id="quarto-animate-title">Boost your productivity with <code>skrub</code>!</h1>
+<p><code>skrub</code> simplifies many tedious data preparation operations</p>
+</section>
+<section id="an-example-pipeline" class="slide level2">
+<h2>An example pipeline</h2>
+<ol type="1">
+<li class="fragment">Gather some data</li>
+<li class="fragment">Explore the data</li>
+<li class="fragment">Pre-process the data</li>
+<li class="fragment">Perform feature engineering</li>
+<li class="fragment">Build a scikit-learn pipeline</li>
+<li class="fragment">???</li>
+<li class="fragment">Profit?</li>
+</ol>
+</section>
+<section id="exploring-the-data-with-skrub" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Exploring the data with <code>skrub</code></h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb1-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub <span class="im">import</span> TableReport</span>
+<span id="cb1-2" class="hljs-ln-code"><a></a>TableReport(employee_salaries)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><a href="https://skrub-data.org/skrub-reports/examples/employee_salaries.html" data-preview-link="true">Preview</a></p>
+<div class="fragment">
+<p>Main features:</p>
+<ul>
+<li>Obtain high-level statistics about the data</li>
+<li>Explore the distribution of values and find outliers</li>
+<li>Discover highly correlated columns</li>
+<li>Export and share the report as an <code>html</code> file</li>
+</ul>
+</div>
+</section>
+<section id="lightweight-data-cleaning-cleaner" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Lightweight data cleaning: <code>Cleaner</code></h2>
+<div id="f7e286bd" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb2-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub.datasets <span class="im">import</span> fetch_employee_salaries</span>
+<span id="cb2-2" class="hljs-ln-code"><a></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
+<span id="cb2-3" class="hljs-ln-code"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-4" class="hljs-ln-code"><a></a></span>
+<span id="cb2-5" class="hljs-ln-code"><a></a>dataset <span class="op">=</span> fetch_employee_salaries()</span>
+<span id="cb2-6" class="hljs-ln-code"><a></a>employees, salaries <span class="op">=</span> dataset.X, dataset.y</span>
+<span id="cb2-7" class="hljs-ln-code"><a></a></span>
+<span id="cb2-8" class="hljs-ln-code"><a></a>df <span class="op">=</span> pd.DataFrame(employees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Downloading 'employee_salaries' from https://github.com/skrub-data/skrub-data-files/raw/refs/heads/main/employee_salaries.zip (attempt 1/3)</code></pre>
+</div>
+</div>
+</section>
+<section id="lightweight-data-cleaning-cleaner-1" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Lightweight data cleaning: <code>Cleaner</code></h2>
+<div id="e4b33985" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb4-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub <span class="im">import</span> Cleaner</span>
+<span id="cb4-2" class="hljs-ln-code"><a></a>cleaner <span class="op">=</span> Cleaner(drop_if_constant<span class="op">=</span><span class="va">True</span>, datetime_format<span class="op">=</span><span class="st">'</span><span class="sc">%d</span><span class="st">/%m/%Y'</span>)</span>
+<span id="cb4-3" class="hljs-ln-code"><a></a>df_cleaned <span class="op">=</span> cleaner.fit_transform(df)</span>
+<span id="cb4-4" class="hljs-ln-code"><a></a>display(df_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">department</th>
+<th data-quarto-table-cell-role="th">department_name</th>
+<th data-quarto-table-cell-role="th">division</th>
+<th data-quarto-table-cell-role="th">assignment_category</th>
+<th data-quarto-table-cell-role="th">employee_position_title</th>
+<th data-quarto-table-cell-role="th">date_first_hired</th>
+<th data-quarto-table-cell-role="th">year_first_hired</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>F</td>
+<td>POL</td>
+<td>Department of Police</td>
+<td>MSB Information Mgmt and Tech Division Records...</td>
+<td>Fulltime-Regular</td>
+<td>Office Services Coordinator</td>
+<td>09/22/1986</td>
+<td>1986</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>M</td>
+<td>POL</td>
+<td>Department of Police</td>
+<td>ISB Major Crimes Division Fugitive Section</td>
+<td>Fulltime-Regular</td>
+<td>Master Police Officer</td>
+<td>09/12/1988</td>
+<td>1988</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>F</td>
+<td>HHS</td>
+<td>Department of Health and Human Services</td>
+<td>Adult Protective and Case Management Services</td>
+<td>Fulltime-Regular</td>
+<td>Social Worker IV</td>
+<td>11/19/1989</td>
+<td>1989</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>M</td>
+<td>COR</td>
+<td>Correction and Rehabilitation</td>
+<td>PRRS Facility and Security</td>
+<td>Fulltime-Regular</td>
+<td>Resident Supervisor II</td>
+<td>05/05/2014</td>
+<td>2014</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>M</td>
+<td>HCA</td>
+<td>Department of Housing and Community Affairs</td>
+<td>Affordable Housing Programs</td>
+<td>Fulltime-Regular</td>
+<td>Planning Specialist III</td>
+<td>03/05/2007</td>
+<td>2007</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9223</td>
+<td>F</td>
+<td>HHS</td>
+<td>Department of Health and Human Services</td>
+<td>School Based Health Centers</td>
+<td>Fulltime-Regular</td>
+<td>Community Health Nurse II</td>
+<td>11/03/2015</td>
+<td>2015</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9224</td>
+<td>F</td>
+<td>FRS</td>
+<td>Fire and Rescue Services</td>
+<td>Human Resources Division</td>
+<td>Fulltime-Regular</td>
+<td>Fire/Rescue Division Chief</td>
+<td>11/28/1988</td>
+<td>1988</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9225</td>
+<td>M</td>
+<td>HHS</td>
+<td>Department of Health and Human Services</td>
+<td>Child and Adolescent Mental Health Clinic Serv...</td>
+<td>Parttime-Regular</td>
+<td>Medical Doctor IV - Psychiatrist</td>
+<td>04/30/2001</td>
+<td>2001</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9226</td>
+<td>M</td>
+<td>CCL</td>
+<td>County Council</td>
+<td>Council Central Staff</td>
+<td>Fulltime-Regular</td>
+<td>Manager II</td>
+<td>09/05/2006</td>
+<td>2006</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9227</td>
+<td>M</td>
+<td>DLC</td>
+<td>Department of Liquor Control</td>
+<td>Licensure, Regulation and Education</td>
+<td>Fulltime-Regular</td>
+<td>Alcohol/Tobacco Enforcement Specialist II</td>
+<td>01/30/2012</td>
+<td>2012</td>
+</tr>
+</tbody>
+</table>
+
+<p>9228 rows × 8 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="encoding-datetime-features-skrub.datetimeencoder" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Encoding datetime features <code>skrub.DatetimeEncoder</code></h2>
+<div id="8f26c4e9" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb5-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub <span class="im">import</span> DatetimeEncoder, ToDatetime</span>
+<span id="cb5-2" class="hljs-ln-code"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-3" class="hljs-ln-code"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-4" class="hljs-ln-code"><a></a></span>
+<span id="cb5-5" class="hljs-ln-code"><a></a>data <span class="op">=</span> {</span>
+<span id="cb5-6" class="hljs-ln-code"><a></a>    <span class="st">'Constant int'</span>: [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>],  <span class="co"># Single unique value</span></span>
+<span id="cb5-7" class="hljs-ln-code"><a></a>    <span class="st">'B'</span>: [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>],  <span class="co"># Multiple unique values</span></span>
+<span id="cb5-8" class="hljs-ln-code"><a></a>    <span class="st">'Constant str'</span>: [<span class="st">'x'</span>, <span class="st">'x'</span>, <span class="st">'x'</span>],  <span class="co"># Single unique value</span></span>
+<span id="cb5-9" class="hljs-ln-code"><a></a>    <span class="st">'D'</span>: [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>],  <span class="co"># Multiple unique values</span></span>
+<span id="cb5-10" class="hljs-ln-code"><a></a>    <span class="st">'All nan'</span>: [np.nan, np.nan, np.nan],  <span class="co"># All missing values </span></span>
+<span id="cb5-11" class="hljs-ln-code"><a></a>    <span class="st">'All empty'</span>: [<span class="st">''</span>, <span class="st">''</span>, <span class="st">''</span>],  <span class="co"># All empty strings</span></span>
+<span id="cb5-12" class="hljs-ln-code"><a></a>    <span class="st">'Date'</span>: [<span class="st">'01/01/2023'</span>, <span class="st">'02/01/2023'</span>, <span class="st">'03/01/2023'</span>],</span>
+<span id="cb5-13" class="hljs-ln-code"><a></a>}</span>
+<span id="cb5-14" class="hljs-ln-code"><a></a></span>
+<span id="cb5-15" class="hljs-ln-code"><a></a>df <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb5-16" class="hljs-ln-code"><a></a>de <span class="op">=</span> DatetimeEncoder(periodic_encoding<span class="op">=</span><span class="st">"circular"</span>)</span>
+<span id="cb5-17" class="hljs-ln-code"><a></a>X_date <span class="op">=</span> ToDatetime().fit_transform(df[<span class="st">"Date"</span>])</span>
+<span id="cb5-18" class="hljs-ln-code"><a></a>X_enc <span class="op">=</span> de.fit_transform(X_date)</span>
+<span id="cb5-19" class="hljs-ln-code"><a></a><span class="bu">print</span>(X_enc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Date_year  Date_total_seconds  Date_month_circular_0  \
+0     2023.0        1.672531e+09               0.500000   
+1     2023.0        1.675210e+09               0.866025   
+2     2023.0        1.677629e+09               1.000000   
+
+   Date_month_circular_1  Date_day_circular_0  Date_day_circular_1  
+0           8.660254e-01             0.207912             0.978148  
+1           5.000000e-01             0.207912             0.978148  
+2           6.123234e-17             0.207912             0.978148  </code></pre>
+</div>
+</div>
+</section>
+<section id="what-periodic-features-look-like" class="slide level2">
+<h2>What periodic features look like</h2>
+
+<img data-src="images/periodic_features.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="encoding-all-the-features-with-skrub.tablevectorizer" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Encoding <em>all the features</em> with <code>skrub.TableVectorizer</code></h2>
+
+<img data-src="images/skrub-table-vectorizer.png" class="r-stretch"></section>
+<section id="build-a-predictive-pipeline" class="slide level2" data-auto-animate="true" data-visibility="uncounted">
+<h2 data-id="quarto-animate-title">Build a predictive pipeline</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb7-1" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
+<span id="cb7-2" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb7-3" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, OneHotEncoder</span>
+<span id="cb7-4" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb7-5" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.compose <span class="im">import</span> make_column_selector <span class="im">as</span> selector</span>
+<span id="cb7-6" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.compose <span class="im">import</span> make_column_transformer</span>
+<span id="cb7-7" class="hljs-ln-code"><a></a></span>
+<span id="cb7-8" class="hljs-ln-code"><a></a>categorical_columns <span class="op">=</span> selector(dtype_include<span class="op">=</span><span class="bu">object</span>)(employees)</span>
+<span id="cb7-9" class="hljs-ln-code"><a></a>numerical_columns <span class="op">=</span> selector(dtype_exclude<span class="op">=</span><span class="bu">object</span>)(employees)</span>
+<span id="cb7-10" class="hljs-ln-code"><a></a></span>
+<span id="cb7-11" class="hljs-ln-code"><a></a>ct <span class="op">=</span> make_column_transformer(</span>
+<span id="cb7-12" class="hljs-ln-code"><a></a>      (StandardScaler(),</span>
+<span id="cb7-13" class="hljs-ln-code"><a></a>       numerical_columns),</span>
+<span id="cb7-14" class="hljs-ln-code"><a></a>      (OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>),</span>
+<span id="cb7-15" class="hljs-ln-code"><a></a>       categorical_columns))</span>
+<span id="cb7-16" class="hljs-ln-code"><a></a></span>
+<span id="cb7-17" class="hljs-ln-code"><a></a>model <span class="op">=</span> make_pipeline(ct, SimpleImputer(), Ridge())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="build-a-predictive-pipeline-with-tabular_pipeline" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Build a predictive pipeline with <code>tabular_pipeline</code></h2>
+<div id="885e8e5c" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb8-1" class="hljs-ln-code"><a></a><span class="im">import</span> skrub</span>
+<span id="cb8-2" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
+<span id="cb8-3" class="hljs-ln-code"><a></a>model <span class="op">=</span> skrub.tabular_pipeline(Ridge())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="we-now-have-a-pipeline" class="slide level2 smaller">
+<h2>We now have a pipeline!</h2>
+<ol type="1">
+<li class="fragment">Gather some data
+<ul>
+<li class="fragment"><code>skrub.datasets</code>, or user data</li>
+</ul></li>
+<li class="fragment">Explore the data
+<ul>
+<li class="fragment"><code>skrub.TableReport</code></li>
+</ul></li>
+<li class="fragment">Pre-process the data
+<ul>
+<li class="fragment"><code>skrub.TableVectorizer</code>, <code>Cleaner</code>, …</li>
+</ul></li>
+<li class="fragment">Perform feature engineering
+<ul>
+<li class="fragment"><code>DatetimeEncoder</code>, <code>TextEncoder</code>, <code>StringEncoder</code>…</li>
+</ul></li>
+<li class="fragment">Build a scikit-learn pipeline
+<ul>
+<li class="fragment"><code>tabular_pipeline</code>, <code>sklearn.pipeline.make_pipeline</code> …</li>
+</ul></li>
+<li class="fragment">???</li>
+<li class="fragment">Profit 📈</li>
+</ol>
+</section></section>
+<section>
+<section id="what-if-we-had-a-better-pipeline" class="title-slide slide level1 center">
+<h1>What if we had a <em>better</em> pipeline?</h1>
+
+</section>
+<section id="a-realistic-scenario" class="slide level2">
+<h2>A realistic scenario</h2>
+<p>A data scientist needs to train a ML model, but features are spread across multiple tables.</p>
+<div class="fragment">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Many issues with this!</p>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li class="fragment"><code>scikit-learn</code> pipelines support only a single feature matrix <code>X</code></li>
+<li class="fragment">Dataframe operations cannot be tuned</li>
+<li class="fragment">Data leakage must be accounted for</li>
+<li class="fragment">Persisting and reproducing operations is complex</li>
+</ul>
+</section>
+<section id="skrub-dataops" class="slide level2">
+<h2><code>skrub</code> DataOps</h2>
+<p>When a normal pipe is not enough…</p>
+<div class="fragment" style="font-size:2em;">
+<p>… the <code>skrub</code> DataOps come to the rescue 🚒</p>
+</div>
+</section>
+<section id="dataops" class="slide level2">
+<h2>DataOps…</h2>
+<ul>
+<li class="fragment">Extend the <code>scikit-learn</code> machinery to complex multi-table operations</li>
+<li class="fragment">Track all operations with a computational graph</li>
+<li class="fragment">Can tune any operation in the data plan</li>
+<li class="fragment">Can be persisted and shared easily by generating a <code>learner</code></li>
+</ul>
+</section>
+<section id="dataops-dataops-plans-learners-oh-my" class="slide level2">
+<h2>DataOps, DataOps plans, <code>learner</code>s: oh my!</h2>
+<ul>
+<li class="fragment"><p>A <code>DataOp</code> (singular) wraps a single operation, and can be combined and concatenated with other <code>DataOps</code>.</p></li>
+<li class="fragment"><p>We refer to a sequence and combination of <code>DataOps</code> as a <code>DataOps</code> plan.</p></li>
+<li class="fragment"><p>The <code>DataOps</code> plan can be exported as a standalone object called <code>learner</code>. The <code>learner</code> takes a dictionary of values rather than just <code>X</code> and <code>y</code>.</p></li>
+</ul>
+</section>
+<section id="how-do-dataops-work-though" class="slide level2">
+<h2>How do DataOps work, though?</h2>
+<p>DataOps <strong>wrap</strong> around <em>user operations</em>, where user operations are:</p>
+<ul>
+<li class="fragment">any dataframe operation (e.g., merge, group by, aggregate etc.)</li>
+<li class="fragment">scikit-learn estimators (a Random Forest, RidgeCV etc.)</li>
+<li class="fragment">custom user code (load data from a path, fetch from an URL etc.)</li>
+</ul>
+<div class="fragment">
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>DataOps <em>record</em> user operations, so that they can later be <em>replayed</em> in the same order and with the same arguments on unseen data.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="starting-with-the-dataops" class="slide level2">
+<h2>Starting with the <code>DataOps</code></h2>
+<div id="b3e91187" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>data <span class="op">=</span> skrub.datasets.fetch_credit_fraud()</span>
+<span id="cb9-2"><a></a></span>
+<span id="cb9-3"><a></a>baskets <span class="op">=</span> skrub.var(<span class="st">"baskets"</span>, data.baskets)</span>
+<span id="cb9-4"><a></a>X <span class="op">=</span> baskets[[<span class="st">"ID"</span>]].skb.mark_as_X()</span>
+<span id="cb9-5"><a></a>y <span class="op">=</span> baskets[<span class="st">"fraud_flag"</span>].skb.mark_as_y()</span>
+<span id="cb9-6"><a></a></span>
+<span id="cb9-7"><a></a>products <span class="op">=</span> skrub.var(<span class="st">"products"</span>, data.products) <span class="co"># add a new variable</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Downloading 'credit_fraud' from https://github.com/skrub-data/skrub-data-files/raw/refs/heads/main/credit_fraud.zip (attempt 1/3)</code></pre>
+</div>
+</div>
+<ul>
+<li class="fragment"><code>X</code>, <code>y</code>, <code>products</code> represent inputs to the pipeline.</li>
+<li class="fragment"><code>skrub</code> splits <code>X</code> and <code>y</code> when training.</li>
+</ul>
+</section>
+<section id="building-a-full-data-plan" class="slide level2">
+<h2>Building a full data plan</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="im">from</span> skrub <span class="im">import</span> selectors <span class="im">as</span> s</span>
+<span id="cb11-2"><a></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> ExtraTreesClassifier  </span>
+<span id="cb11-3"><a></a></span>
+<span id="cb11-4"><a></a>vectorizer <span class="op">=</span> skrub.TableVectorizer(high_cardinality<span class="op">=</span>skrub.StringEncoder(), n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb11-5"><a></a></span>
+<span id="cb11-6"><a></a>vectorized_products <span class="op">=</span> products.skb.<span class="bu">apply</span>(vectorizer, cols<span class="op">=</span>s.<span class="bu">all</span>() <span class="op">-</span> <span class="st">"basket_ID"</span>)</span>
+<span id="cb11-7"><a></a>aggregated_products <span class="op">=</span> vectorized_products.groupby(<span class="st">"basket_ID"</span>).agg(<span class="st">"mean"</span>).reset_index()</span>
+<span id="cb11-8"><a></a></span>
+<span id="cb11-9"><a></a>features <span class="op">=</span> X.merge(aggregated_products, left_on<span class="op">=</span><span class="st">"ID"</span>, right_on<span class="op">=</span><span class="st">"basket_ID"</span>)</span>
+<span id="cb11-10"><a></a>features <span class="op">=</span> features.drop(columns<span class="op">=</span>[<span class="st">"ID"</span>, <span class="st">"basket_ID"</span>])</span>
+<span id="cb11-11"><a></a></span>
+<span id="cb11-12"><a></a>predictions <span class="op">=</span> features.skb.<span class="bu">apply</span>(ExtraTreesClassifier(n_jobs<span class="op">=-</span><span class="dv">1</span>), y<span class="op">=</span>y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="exporting-the-plan-in-a-learner" class="slide level2 smaller">
+<h2>Exporting the plan in a <code>learner</code></h2>
+<p>The data plan can be exported as a <code>learner</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="co"># anywhere</span></span>
+<span id="cb12-2"><a></a>learner <span class="op">=</span> predictions.skb.make_learner()</span>
+<span id="cb12-3"><a></a><span class="co"># search is a HPO object</span></span>
+<span id="cb12-4"><a></a>best_learner <span class="op">=</span> search.skb.best_learner_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="fragment">
+<p>Then, the <code>learner</code> can be pickled …</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a><span class="im">import</span> pickle</span>
+<span id="cb13-2"><a></a></span>
+<span id="cb13-3"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"learner.bin"</span>, <span class="st">"wb"</span>) <span class="im">as</span> fp:</span>
+<span id="cb13-4"><a></a>    pickle.dump(learner, fp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>… and loaded</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"learner.bin"</span>, <span class="st">"rb"</span>) <span class="im">as</span> fp:</span>
+<span id="cb14-2"><a></a>    learner <span class="op">=</span> pickle.load(fp)</span>
+<span id="cb14-3"><a></a></span>
+<span id="cb14-4"><a></a>learner.predict({<span class="st">"baskets"</span>: new_baskets, <span class="st">"products"</span>: new_products})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="hyperparameter-tuning-in-a-data-plan" class="slide level2">
+<h2>Hyperparameter tuning in a Data Plan</h2>
+<p><code>skrub</code> implements four <code>choose_*</code> functions (and <code>optional</code>):</p>
+<ul>
+<li class="fragment"><code>choose_from</code>: select from the given list of options</li>
+<li class="fragment"><code>choose_int</code>: select an integer within a range</li>
+<li class="fragment"><code>choose_float</code>: select a float within a range</li>
+<li class="fragment"><code>choose_bool</code>: select a bool</li>
+<li class="fragment"><code>optional</code>: chooses between a value or DataOp and no op</li>
+</ul>
+</section>
+<section id="hyperparameter-tuning-in-a-data-plan-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Hyperparameter tuning in a Data Plan</h2>
+<p>It’s possible to nest these functions to create complex grids:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb15-1" class="hljs-ln-code"><a></a>X.skb.<span class="bu">apply</span>(</span>
+<span id="cb15-2" class="hljs-ln-code"><a></a>    skrub.choose_from(</span>
+<span id="cb15-3" class="hljs-ln-code"><a></a>        {</span>
+<span id="cb15-4" class="hljs-ln-code"><a></a>            <span class="st">"PCA"</span>: PCA(n_components<span class="op">=</span>skrub.choose_int(<span class="dv">10</span>, <span class="dv">30</span>)),</span>
+<span id="cb15-5" class="hljs-ln-code"><a></a>            <span class="st">"SelectKBest"</span>: SelectKBest(k<span class="op">=</span>skrub.choose_int(<span class="dv">10</span>, <span class="dv">30</span>))</span>
+<span id="cb15-6" class="hljs-ln-code"><a></a>        }, name<span class="op">=</span><span class="st">"dim_reduction"</span></span>
+<span id="cb15-7" class="hljs-ln-code"><a></a>    )</span>
+<span id="cb15-8" class="hljs-ln-code"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="observe-the-impact-of-the-hyperparameters" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Observe the impact of the hyperparameters</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb16-1" class="hljs-ln-code"><a></a>search <span class="op">=</span> pred.skb.get_randomized_search(scoring<span class="op">=</span><span class="st">"roc_auc"</span>, fitted<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-2" class="hljs-ln-code"><a></a></span>
+<span id="cb16-3" class="hljs-ln-code"><a></a>search.plot_parallel_coord()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<img data-src="images/plot-parallel-coord.png" class="quarto-figure quarto-figure-center r-stretch"></section></section>
+<section id="getting-involved" class="title-slide slide level1 center">
+<h1>Getting involved</h1>
+<ul>
+<li><a href="https://skrub-data.org/stable/">Skrub website</a> (QR code below!)</li>
+<li><a href="https://skrub-data.org/skrub-materials/index.html">Skrub materials website</a></li>
+<li><a href="https://github.com/skrub-data/skrub/">Git repository</a></li>
+<li><a href="https://discord.gg/ABaPnm7fDC">Discord server</a></li>
+<li><a href="https://bsky.app/profile/skrub-data.bsky.social">Bluesky</a></li>
+</ul>
+<p><img data-src="images/qr-code.png" class="absolute" style="bottom: 0px; right: 0px; width: 250px; height: 250px; "></p>
+</section>
+
+<section id="time-for-the-tutorial" class="title-slide slide level1 center">
+<h1>Time for the tutorial …</h1>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="images/skrub.svg" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -1,0 +1,7 @@
+h1.title {
+  background-image: url(images/skrub.svg);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 200px;
+  min-height: 200px; /* Set the minimum height to match the background image height */
+}
