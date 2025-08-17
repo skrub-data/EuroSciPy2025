@@ -62,7 +62,7 @@ import holidays
 # We wrap the resulting polars dataframe in a `skrub` DataOp to benefit
 # from the built-in `skrub.TableReport` display in the notebook. Using the
 # `skrub` DataOps will also be useful for other reasons: all
-# operations in this notebook chain operations chained together in a directed
+# operations in this notebook are chained together in a directed
 # acyclic graph that is automatically tracked by `skrub`. This allows us to
 # extract the resulting pipeline and apply it to new data later on, exactly
 # like a trained scikit-learn pipeline. The main difference is that we do so

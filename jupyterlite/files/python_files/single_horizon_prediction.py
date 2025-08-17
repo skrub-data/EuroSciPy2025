@@ -159,7 +159,7 @@ hgbr_pipeline.describe_params()
 #
 # In the example below, we define that the training data should be at most 2 years
 # worth of data and the test data should be 24 weeks long. We also define a gap of
-# 1 week between the training.
+# 1 week between the training and the testing sets.
 #
 # Let's check those statistics by iterating over the different folds provided by the
 # splitter.
@@ -286,7 +286,7 @@ plot_lorenz_curve(hgbr_cv_predictions).interactive()
 # A true model is navigating between the diagonal and the oracle model. The area between
 # the diagonal and the Lorenz curve of a model is called the Gini index.
 #
-# For our model, we observe that each oracle model is not far from the diagonal. It
+# For our use case, we observe that each oracle model is not far from the diagonal. It
 # means that the observed values do not contain a couple of large values with high
 # variability. Therefore, it informs us that the complexity of our problem at hand is
 # not too high. Looking at the Lorenz curve of each model, we observe that it is quite
