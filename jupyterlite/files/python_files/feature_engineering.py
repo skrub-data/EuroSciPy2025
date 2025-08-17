@@ -167,47 +167,83 @@ all_city_weather
 # %% [markdown]
 # ## Calendar and holidays features
 #
-# We leverage the `holidays` package to enrich the time range with some
-# calendar features such as public holidays in France. We also add some
-# features that are useful for time series forecasting such as the day of the
-# week, the day of the year, and the hour of the day.
+# We leverage the `holidays` package to enrich the time range with some calendar
+# features such as public holidays in France. We also add some features that are useful
+# for time series forecasting such as the day of the week, the day of the year, and the
+# hour of the day.
 #
-# Note that the `holidays` package requires us to extract the date for the
-# French timezone.
+# We want to use the `holidays` package to enrich the time range with some calendar
+# features such as public holidays in France. In addition, we want to use `skrub`
+# `DatetimeEncoder` to add some features that are useful for time series forecasting
+# such as the calendar year, month, day, hour, the day of the week and the day of the
+# year.
 #
-# Similarly for the calendar features: all the time features are extracted from
-# the time in the French timezone, since it is likely that electricity usage
-# patterns are influenced by inhabitants' daily routines aligned with the local
+# Note that the `holidays` package requires us to extract the date for the French
 # timezone.
+#
+# Similarly for the calendar features: all the time features are extracted from the time
+# in the French timezone, since it is likely that electricity usage patterns are
+# influenced by inhabitants' daily routines aligned with the local timezone.
+#
+# ### Exercise
+#
+# Let's first create some calendar features using `skrub`'s `DatetimeEncoder`.
+#
+# 1. Create a `DatetimeEncoder` object and by looking at the documentation, make sure
+#    to add the weekday and the day of the year. Do not add the total seconds since the
+#    Unix epoch. You can refer to this link:
+#    https://skrub-data.org/stable/reference/generated/skrub.DatetimeEncoder.html
+# 2. As a first operation, we wish to rename the `time` column to `cal` such that
+#    the all columns corresponding to some calendar features will be prefixed with
+#    `cal_`. You can simply call the `rename` method (cf.
+#    https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.rename.html)
+#    because `time` can be seen as a polars dataframe.
+# 3. Now, we wish to apply the encoder to the `time` dataframe. Refer to the following
+#    link for all details:
+#    https://skrub-data.org/stable/reference/generated/skrub.DataOp.skb.apply.html
+# 4. Let's call the resulting skrub `DataOp` `time_encoded` and check the output
+#    representation to check if the preview looks what we expect.
+
+# %%
+from skrub import DatetimeEncoder
+
+
+# %% [markdown]
+#
+# ### Solution
 
 
 # %%
-@skrub.deferred
-def prepare_french_calendar_data(time):
-    fr_time = pl.col("time").dt.convert_time_zone("Europe/Paris")
-    fr_year_min = time.select(fr_time.dt.year().min()).item()
-    fr_year_max = time.select(fr_time.dt.year().max()).item()
-    holidays_fr = holidays.country_holidays(
-        "FR", years=range(fr_year_min, fr_year_max + 1)
-    )
-    return time.with_columns(
-        [
-            fr_time.dt.hour().alias("cal_hour_of_day"),
-            fr_time.dt.weekday().alias("cal_day_of_week"),
-            fr_time.dt.ordinal_day().alias("cal_day_of_year"),
-            fr_time.dt.year().alias("cal_year"),
-            fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
-        ],
-    )
-
-
-from skrub import DatetimeEncoder
-
 datetime_encoder = DatetimeEncoder(
     add_weekday=True, add_day_of_year=True, add_total_seconds=False
 )
+time_encoded = time.rename({"time": "cal"}).skb.apply(datetime_encoder)
+time_encoded
 
+# %% [markdown]
+#
+# ### Exercise
+#
+# Now, let's create a processing function that is going to be decorated with the
+# `@skrub.deferred` decorator. This function should:
+# 1. Take the `time` dataframe as an input.
+# 2. Convert the "time" column to the French/Paris timezone.
+# 3. Extract the French holidays by calling `holidays.country_holidays`. For this
+#    function, you need to extract the minimum and maximum year from the "time" column.
+# 4. Finally, you need to if a date in holiday is a French holiday. You can call this
+#    column `cal_is_holiday`.
+# 5. Apply this function to the `time` `DataOp` and call the resulting variable
+#    `is_french_holiday`.
+# 6. Finally, we wish to concatenate the `time_encoded` and `is_french_holiday` using
+#    the `.skb.concat` method.
 
+# %%
+
+# %% [markdown]
+#
+# ### Solution
+
+# %%
 @skrub.deferred
 def prepare_holidays(time):
     fr_time = pl.col("time").dt.convert_time_zone("Europe/Paris")
@@ -220,11 +256,11 @@ def prepare_holidays(time):
         fr_time.dt.date().is_in(holidays_fr.keys()).alias("cal_is_holiday"),
     )
 
+is_french_holiday = prepare_holidays(time)
+is_french_holiday
 
-time_encoded = time.rename({"time": "cal"}).skb.apply(datetime_encoder)
-
-calendar = time.skb.concat([time_encoded, prepare_holidays(time)], axis=1)
-# calendar = prepare_french_calendar_data(time)
+# %%
+calendar = time.skb.concat([time_encoded, is_french_holiday], axis=1)
 calendar
 
 
