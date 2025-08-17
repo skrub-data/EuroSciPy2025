@@ -29,11 +29,6 @@ from tutorial_helpers import (
     collect_cv_predictions,
 )
 
-
-# Ignore warnings from pkg_resources triggered by Python 3.13's multiprocessing.
-warnings.filterwarnings("ignore", category=UserWarning, module="pkg_resources")
-
-
 # %%
 with open("feature_engineering_pipeline.pkl", "rb") as f:
     feature_engineering_pipeline = cloudpickle.load(f)
@@ -202,25 +197,15 @@ for fold_idx, (train_idx, test_idx) in enumerate(
 # interpretable and customary for regression tasks with a strictly positive
 # target variable such as electricity load forecasting.
 #
-# We can also look at the R2 score and the Poisson and Gamma deviance which are
-# all strictly proper scoring rules for estimation of E[y|X]: in the large
-# sample limit, minimizers of those metrics all identify the conditional
-# expectation of the target variable given the features for strictly positive
-# target variables. All those metrics follow the higher is better convention,
-# 1.0 is the maximum reachable score and 0.0 is the score of a model that
-# predicts the mean of the target variable for all observations, irrespective
-# of the features.
-#
-# Note that in general, a deviance score of 1.0 is not reachable since it
-# corresponds to a model that always predicts the target value exactly
-# for all observations. In practice, this does not happen because there is always
-# a fraction of the
-# variability in the target variable that is not explained by the information
-# available to construct the features.
+# We can also look at the R2 score that is a strictly proper scoring rule for estimation
+# of E[y|X]: in the large sample limit, minimizers of those metrics all identify the
+# conditional expectation of the target variable given the features for strictly
+# positive target variables. This metric follows the higher is better convention, 1.0 is
+# the maximum reachable score and 0.0 is the score of a model that predicts the mean of
+# the target variable for all observations, irrespective of the features.
 
 # %%
 from sklearn.metrics import make_scorer, mean_absolute_percentage_error, get_scorer
-from sklearn.metrics import d2_tweedie_score
 
 
 hgbr_cv_results = hgbr_predictions.skb.cross_validate(
@@ -228,8 +213,6 @@ hgbr_cv_results = hgbr_predictions.skb.cross_validate(
     scoring={
         "mape": make_scorer(mean_absolute_percentage_error),
         "r2": get_scorer("r2"),
-        "d2_poisson": make_scorer(d2_tweedie_score, power=1.0),
-        "d2_gamma": make_scorer(d2_tweedie_score, power=2.0),
     },
     return_train_score=True,
     return_learner=True,
@@ -241,8 +224,7 @@ hgbr_cv_results.round(3)
 # %% [markdown]
 #
 # Those results show very good performance of the model: less than 3% of mean
-# absolute percentage error (MAPE) on the test folds. Similarly, all the
-# deviance scores are close to 1.0.
+# absolute percentage error (MAPE) on the test folds.
 #
 # We observe a bit of variability in the scores across the different folds: in
 # particular the test performance on the first fold seems to be worse than the
