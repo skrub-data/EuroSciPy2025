@@ -256,7 +256,7 @@ Riccardo Cappuzzo, Guillaume Lemaitre
 </section>
 <section id="lightweight-data-cleaning-cleaner" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Lightweight data cleaning: <code>Cleaner</code></h2>
-<div id="f2d52f1e" class="cell" data-execution_count="1">
+<div id="4a13644a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb2-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub.datasets <span class="im">import</span> fetch_employee_salaries</span>
 <span id="cb2-2" class="hljs-ln-code"><a></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb2-3" class="hljs-ln-code"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -272,7 +272,7 @@ Riccardo Cappuzzo, Guillaume Lemaitre
 </section>
 <section id="lightweight-data-cleaning-cleaner-1" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Lightweight data cleaning: <code>Cleaner</code></h2>
-<div id="a96a790c" class="cell" data-execution_count="2">
+<div id="0262c700" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb4-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub <span class="im">import</span> Cleaner</span>
 <span id="cb4-2" class="hljs-ln-code"><a></a>cleaner <span class="op">=</span> Cleaner(drop_if_constant<span class="op">=</span><span class="va">True</span>, datetime_format<span class="op">=</span><span class="st">'</span><span class="sc">%d</span><span class="st">/%m/%Y'</span>)</span>
 <span id="cb4-3" class="hljs-ln-code"><a></a>df_cleaned <span class="op">=</span> cleaner.fit_transform(df)</span>
@@ -439,7 +439,7 @@ Riccardo Cappuzzo, Guillaume Lemaitre
 </section>
 <section id="encoding-datetime-features-skrub.datetimeencoder" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Encoding datetime features <code>skrub.DatetimeEncoder</code></h2>
-<div id="c9ecc95e" class="cell" data-execution_count="3">
+<div id="243cea24" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb5-1" class="hljs-ln-code"><a></a><span class="im">from</span> skrub <span class="im">import</span> DatetimeEncoder, ToDatetime</span>
 <span id="cb5-2" class="hljs-ln-code"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb5-3" class="hljs-ln-code"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -502,7 +502,7 @@ Riccardo Cappuzzo, Guillaume Lemaitre
 </section>
 <section id="build-a-predictive-pipeline-with-tabular_pipeline" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Build a predictive pipeline with <code>tabular_pipeline</code></h2>
-<div id="c258e248" class="cell" data-execution_count="4">
+<div id="0c8160f8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb8-1" class="hljs-ln-code"><a></a><span class="im">import</span> skrub</span>
 <span id="cb8-2" class="hljs-ln-code"><a></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
 <span id="cb8-3" class="hljs-ln-code"><a></a>model <span class="op">=</span> skrub.tabular_pipeline(Ridge())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -615,7 +615,7 @@ Riccardo Cappuzzo, Guillaume Lemaitre
 </section>
 <section id="starting-with-the-dataops" class="slide level2">
 <h2>Starting with the <code>DataOps</code></h2>
-<div id="13b53926" class="cell" data-execution_count="5">
+<div id="958a2bae" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>data <span class="op">=</span> skrub.datasets.fetch_credit_fraud()</span>
 <span id="cb9-2"><a></a></span>
 <span id="cb9-3"><a></a>baskets <span class="op">=</span> skrub.var(<span class="st">"baskets"</span>, data.baskets)</span>
