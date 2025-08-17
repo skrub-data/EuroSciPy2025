@@ -349,8 +349,8 @@ ts_cv_2 = TimeSeriesSplit(
 # write_json(fig, "parallel_coordinates_hgbr.json")
 
 # %%
-# fig = read_json("parallel_coordinates_hgbr.json")
-# fig.update_layout(margin=dict(l=200))
+fig = read_json("parallel_coordinates_hgbr.json")
+fig.update_layout(margin=dict(l=200))
 
 # %%
 # nested_cv_results = skrub.cross_validate(
