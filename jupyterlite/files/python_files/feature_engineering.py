@@ -173,7 +173,7 @@ all_city_weather
 # hour of the day.
 #
 # We want to use the `holidays` package to enrich the time range with some calendar
-# features such as public holidays in France. In addition, we want to use `skrub`
+# features such as public holidays in France. In addition, we want to use `skrub`'s
 # `DatetimeEncoder` to add some features that are useful for time series forecasting
 # such as the calendar year, month, day, hour, the day of the week and the day of the
 # year.
@@ -189,12 +189,12 @@ all_city_weather
 #
 # Let's first create some calendar features using `skrub`'s `DatetimeEncoder`.
 #
-# 1. Create a `DatetimeEncoder` object and by looking at the documentation, make sure
+# 1. Create a `DatetimeEncoder` object and, by looking at the documentation, make sure
 #    to add the weekday and the day of the year. Do not add the total seconds since the
 #    Unix epoch. You can refer to this link:
 #    https://skrub-data.org/stable/reference/generated/skrub.DatetimeEncoder.html
 # 2. As a first operation, we wish to rename the `time` column to `cal` such that
-#    the all columns corresponding to some calendar features will be prefixed with
+#    all the columns corresponding to some calendar features will be prefixed with
 #    `cal_`. You can simply call the `rename` method (cf.
 #    https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.rename.html)
 #    because `time` can be seen as a polars dataframe.
@@ -230,12 +230,12 @@ time_encoded
 # 2. Convert the "time" column to the French/Paris timezone.
 # 3. Extract the French holidays by calling `holidays.country_holidays`. For this
 #    function, you need to extract the minimum and maximum year from the "time" column.
-# 4. Finally, you need to if a date in holiday is a French holiday. You can call this
-#    column `cal_is_holiday`.
+# 4. Finally, you need to add if a date in holiday is a French holiday as a feature. 
+#    You can call this column `cal_is_holiday`.
 # 5. Apply this function to the `time` `DataOp` and call the resulting variable
 #    `is_french_holiday`.
-# 6. Finally, we wish to concatenate the `time_encoded` and `is_french_holiday` using
-#    the `.skb.concat` method.
+# 6. Finally, we wish to concatenate the `time_encoded` and `is_french_holiday` 
+#    `DataOps`using the `.skb.concat` method.
 
 # %%
 
@@ -259,7 +259,6 @@ def prepare_holidays(time):
 is_french_holiday = prepare_holidays(time)
 is_french_holiday
 
-# %%
 calendar = time.skb.concat([time_encoded, is_french_holiday], axis=1)
 calendar
 
@@ -268,7 +267,7 @@ calendar
 #
 # ## Electricity load data
 #
-# Finally we load the electricity load data. This data will both be used as a
+# Finally, we load the electricity load data. This data will both be used as a
 # target variable but also to craft some lagged and window-aggregated features.
 
 # %%
@@ -316,7 +315,7 @@ electricity_raw.filter(pl.col("load_mw").is_null())
 
 # %% [markdown]
 #
-# So apparently there a few missing measurements. Let's use linear
+# So apparently there are a few missing measurements. Let's use linear
 # interpolation to fill those missing values.
 
 # %%
@@ -341,7 +340,8 @@ electricity.filter(
 # We will create 3 hourly lagged features, 1 daily lagged feature, and 1 weekly
 # lagged feature. We will also create a rolling median and inter-quartile
 # feature over the last 24 hours and over the last 7 days.
-
+# Inter-quartile features tell us what is the variability of the load over the 
+# given window.
 
 # %%
 def iqr(col, *, window_size: int):
