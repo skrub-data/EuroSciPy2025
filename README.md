@@ -1,5 +1,7 @@
 # Tutorial on Skrub DataOps applied to forecasting timeseries
 
+[![!youtube](https://img.shields.io/static/v1?logo=youtube&label=YouTube&message=Recording&color=red)](https://www.youtube.com/watch?v=hbmfiBX5zZc)
+
 ## Browse the contents online
 
 - [Slides](https://skrub-data.org/EuroSciPy2025/slides/index.html)
